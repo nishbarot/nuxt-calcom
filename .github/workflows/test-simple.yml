@@ -36,6 +36,35 @@ jobs:
       - name: Prepare Nuxt (generate .nuxt directory)
         run: pnpm dev:prepare
 
+      - name: Check for .nuxt directory and tsconfig.json
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Root directory listing:"
+          ls -la
+          if [ -d ".nuxt" ]; then
+            echo ".nuxt directory exists. Listing contents:"
+            ls -la .nuxt
+            if [ -f ".nuxt/tsconfig.json" ]; then
+              echo ".nuxt/tsconfig.json exists."
+            else
+              echo ".nuxt/tsconfig.json ---- DOES NOT EXIST ----"
+            fi
+          else
+            echo ".nuxt directory ---- DOES NOT EXIST ----"
+          fi
+          echo "Checking tsconfig.json in playground/.nuxt"
+          if [ -d "playground/.nuxt" ]; then
+            echo "playground/.nuxt directory exists. Listing contents:"
+            ls -la playground/.nuxt
+            if [ -f "playground/.nuxt/tsconfig.json" ]; then
+              echo "playground/.nuxt/tsconfig.json exists."
+            else
+              echo "playground/.nuxt/tsconfig.json ---- DOES NOT EXIST ----"
+            fi
+          else
+            echo "playground/.nuxt directory ---- DOES NOT EXIST ----"
+          fi
+
       - name: Verify project setup
         run: |
           echo "Dependencies installed successfully"
