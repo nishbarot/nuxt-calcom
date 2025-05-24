@@ -165,3 +165,9 @@ _No critical issues at the moment._
 - ✅ Added comprehensive error handling and logging
 - ✅ Implemented responsive design for all components
 - ✅ Added custom styling props for components
+
+### 05/25/2025
+
+- ✅ Fixed CI errors related to missing `.nuxt/tsconfig.json` by adding a `pnpm dev:prepare` step to the workflow.
+- ✅ Migrated ESLint ignore patterns from `.eslintignore` to `eslint.config.js` and removed `.eslintignore`.
+- ✅ Ran `pnpm lint:fix` to resolve auto-fixable linting issues.

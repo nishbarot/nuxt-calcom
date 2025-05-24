@@ -26,7 +26,14 @@ export default createConfigForNuxt({
       'playground/.nuxt/**',
       'artifacts/**',
       'docs/**',
-      'temp/**'
+      'temp/**',
+      // Added from .eslintignore
+      '*.d.ts',
+      'playground/dist/**',
+      'playwright-report/**',
+      'test-results/**',
+      '.vscode/**',
+      '.idea/**'
     ]
   },
   // Custom rules for the project
