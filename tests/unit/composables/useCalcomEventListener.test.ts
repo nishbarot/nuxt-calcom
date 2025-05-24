@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import {
   useCalcomEventListener,
-  useCalcomBookingSuccess
+  useCalcomBookingSuccess,
 } from '../../../runtime/composables/useCalcomEventListener'
 import { useNuxtApp } from '#app'
 
@@ -9,9 +9,9 @@ import { useNuxtApp } from '#app'
 vi.mock('#app', () => ({
   useNuxtApp: vi.fn(() => ({
     $calcom: {
-      waitForCal: vi.fn().mockResolvedValue(window.Cal)
-    }
-  }))
+      waitForCal: vi.fn().mockResolvedValue(window.Cal),
+    },
+  })),
 }))
 
 describe('useCalcomEventListener', () => {
@@ -23,7 +23,7 @@ describe('useCalcomEventListener', () => {
     // Setup window.Cal mock - create a proper mock function with properties
     mockCal = vi.fn()
     Object.assign(mockCal, {
-      loaded: true
+      loaded: true,
     })
 
     // Update the existing Cal property instead of redefining it
@@ -40,7 +40,7 @@ describe('useCalcomEventListener', () => {
 
       expect(mockCal).toHaveBeenCalledWith('on', {
         action: 'bookingSuccessfulV2',
-        callback: expect.any(Function)
+        callback: expect.any(Function),
       })
     })
 
@@ -77,7 +77,7 @@ describe('useCalcomEventListener', () => {
       const { startListening } = useCalcomEventListener(
         'bookingSuccessfulV2',
         callback,
-        'test-namespace'
+        'test-namespace',
       )
       await startListening()
 
@@ -96,11 +96,11 @@ describe('useCalcomEventListener', () => {
 
       const { startListening: startBooking } = useCalcomEventListener(
         'bookingSuccessfulV2',
-        bookingCallback
+        bookingCallback,
       )
       const { startListening: startSelection } = useCalcomEventListener(
         'eventTypeSelected',
-        selectionCallback
+        selectionCallback,
       )
 
       await startBooking()
@@ -108,12 +108,12 @@ describe('useCalcomEventListener', () => {
 
       expect(mockCal).toHaveBeenCalledWith('on', {
         action: 'bookingSuccessfulV2',
-        callback: expect.any(Function)
+        callback: expect.any(Function),
       })
 
       expect(mockCal).toHaveBeenCalledWith('on', {
         action: 'eventTypeSelected',
-        callback: expect.any(Function)
+        callback: expect.any(Function),
       })
     })
 
@@ -122,7 +122,7 @@ describe('useCalcomEventListener', () => {
 
       const { startListening, isListening } = useCalcomEventListener(
         'bookingSuccessfulV2',
-        callback
+        callback,
       )
 
       expect(isListening()).toBe(false)
@@ -137,7 +137,7 @@ describe('useCalcomEventListener', () => {
 
       const { startListening, stopListening, isListening } = useCalcomEventListener(
         'bookingSuccessfulV2',
-        callback
+        callback,
       )
 
       await startListening()
@@ -157,7 +157,7 @@ describe('useCalcomEventListener', () => {
 
       expect(mockCal).toHaveBeenCalledWith('on', {
         action: 'bookingSuccessfulV2',
-        callback: expect.any(Function)
+        callback: expect.any(Function),
       })
     })
 
@@ -169,7 +169,7 @@ describe('useCalcomEventListener', () => {
 
       expect(mockCal).toHaveBeenCalledWith('on', {
         action: 'bookingSuccessfulV2',
-        callback: expect.any(Function)
+        callback: expect.any(Function),
       })
     })
   })
@@ -182,8 +182,8 @@ describe('useCalcomEventListener', () => {
       const mockNuxtApp = vi.mocked(useNuxtApp)
       mockNuxtApp.mockReturnValue({
         $calcom: {
-          waitForCal: vi.fn().mockRejectedValue(new Error('Script failed to load'))
-        }
+          waitForCal: vi.fn().mockRejectedValue(new Error('Script failed to load')),
+        },
       } as any)
 
       const { startListening } = useCalcomEventListener('bookingSuccessfulV2', callback)

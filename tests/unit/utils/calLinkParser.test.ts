@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   parseCalLink,
   validateCalLink,
-  parseAndValidateCalLink
+  parseAndValidateCalLink,
 } from '../../../runtime/utils/calLinkParser'
 
 describe('calLinkParser', () => {
@@ -97,7 +97,7 @@ describe('calLinkParser', () => {
       expect(parseAndValidateCalLink('https://cal.com/user/30min?theme=dark')).toBe('user/30min')
       expect(parseAndValidateCalLink('https://cal.com/user/30min/', 'fallback')).toBe('user/30min')
       expect(parseAndValidateCalLink('https://notcal.com/user/30min', 'fallback')).toBe(
-        'user/30min'
+        'user/30min',
       )
       expect(parseAndValidateCalLink('https://example.org/meeting', 'fallback')).toBe('fallback')
     })

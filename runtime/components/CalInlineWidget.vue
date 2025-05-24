@@ -1,10 +1,18 @@
 <template>
   <ClientOnly>
     <div>
-      <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
+      <div
+        :id="containerId"
+        ref="containerRef"
+        class="cal-inline-widget"
+        :style="containerStyle"
+      />
     </div>
     <template #fallback>
-      <div class="cal-loading-placeholder" :style="containerStyle">
+      <div
+        class="cal-loading-placeholder"
+        :style="containerStyle"
+      >
         <div class="loading-content">
           <div class="loading-spinner" />
           <p>Loading Cal.com calendar...</p>
@@ -30,7 +38,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   height: '630px',
   width: '100%',
-  uiOptions: () => ({})
+  uiOptions: () => ({}),
 })
 
 const config = useRuntimeConfig()
@@ -65,7 +73,7 @@ const calLink = computed(() => {
 const containerStyle = computed(() => ({
   height: typeof props.height === 'number' ? `${props.height}px` : props.height,
   width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-  ...props.style
+  ...props.style,
 }))
 
 // Compute UI options with defaults from config
@@ -76,7 +84,7 @@ const computedUiOptions = computed(() => {
     ...props.uiOptions,
     theme: calcomConfig?.theme,
     branding: calcomConfig?.branding,
-    hideEventTypeDetails: calcomConfig?.hideEventTypeDetails
+    hideEventTypeDetails: calcomConfig?.hideEventTypeDetails,
   }
 })
 
@@ -114,7 +122,7 @@ const initializeEmbed = async () => {
       console.error('[DEBUG] Element still not found! DOM state:', {
         documentReady: document.readyState,
         bodyChildren: document.body?.children.length,
-        containerId: containerId.value
+        containerId: containerId.value,
       })
 
       // Try one more time after a longer delay
@@ -123,7 +131,8 @@ const initializeEmbed = async () => {
         console.log(`[DEBUG] Retry attempt ${retryCount}/5 in 200ms...`)
         setTimeout(() => initializeEmbed(), 200)
         return
-      } else {
+      }
+      else {
         console.error('[DEBUG] Max retries reached. Element not found.')
         return
       }
@@ -141,30 +150,32 @@ const initializeEmbed = async () => {
       id: element.id,
       offsetWidth: element.offsetWidth,
       offsetHeight: element.offsetHeight,
-      parentElement: element.parentElement
+      parentElement: element.parentElement,
     })
 
     // Use the official Cal.com inline API exactly as documented
     console.log('[DEBUG] Calling Cal inline with params:', {
       elementOrSelector: `#${containerId.value}`,
       calLink: calLink.value,
-      config: computedUiOptions.value
+      config: computedUiOptions.value,
     })
 
     window.Cal('inline', {
       elementOrSelector: `#${containerId.value}`,
       calLink: calLink.value,
-      config: computedUiOptions.value
+      config: computedUiOptions.value,
     })
 
     embedInitialized = true
     retryCount = 0 // Reset retry count on success
     console.log('[nuxt-calcom] Inline widget initialized successfully for:', calLink.value)
-  } catch (error) {
+  }
+  catch (error) {
     console.error('[nuxt-calcom] Failed to initialize inline widget:', error)
     if (error instanceof Error) {
       console.error('[DEBUG] Error details:', error.message, error.stack)
-    } else {
+    }
+    else {
       console.error('[DEBUG] Error details:', String(error))
     }
   }

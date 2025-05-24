@@ -3,7 +3,7 @@ import {
   createResolver,
   addComponentsDir,
   addPlugin,
-  addImportsDir
+  addImportsDir,
 } from '@nuxt/kit'
 
 export interface ModuleOptions {
@@ -46,14 +46,14 @@ export default defineNuxtModule<ModuleOptions>({
     name: 'nuxt-calcom',
     configKey: 'calcom',
     compatibility: {
-      nuxt: '^3.0.0'
-    }
+      nuxt: '^3.0.0',
+    },
   },
   defaults: {
     defaultEmbed: 'inline',
     theme: 'light',
     hideEventTypeDetails: false,
-    uiOptions: {}
+    uiOptions: {},
   },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
@@ -63,7 +63,7 @@ export default defineNuxtModule<ModuleOptions>({
       path: resolver.resolve('../runtime/components'),
       pathPrefix: false,
       prefix: 'Cal',
-      global: true
+      global: true,
     })
 
     // Register composables for auto-import
@@ -72,7 +72,7 @@ export default defineNuxtModule<ModuleOptions>({
     // Add the plugin to inject Cal.com embed script
     addPlugin({
       src: resolver.resolve('../runtime/plugin'),
-      mode: 'client'
+      mode: 'client',
     })
 
     // Make module options available at runtime
@@ -81,7 +81,7 @@ export default defineNuxtModule<ModuleOptions>({
       theme: 'light',
       hideEventTypeDetails: false,
       uiOptions: {},
-      ...options
+      ...options,
     }
-  }
+  },
 })

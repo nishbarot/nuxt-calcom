@@ -35,7 +35,8 @@ export function parseCalLink(input: string): string {
       const calComIndex = trimmed.indexOf('cal.com')
       const urlPart = trimmed.substring(calComIndex)
       url = new URL(`https://${urlPart}`)
-    } else {
+    }
+    else {
       // Fallback: assume it's already a username
       return trimmed
     }
@@ -67,7 +68,8 @@ export function parseCalLink(input: string): string {
 
     // Return the clean pathname (username/event-type)
     return pathname
-  } catch (error) {
+  }
+  catch (error) {
     console.warn('[nuxt-calcom] Failed to parse Cal.com URL:', input, error)
     // Fallback: assume it's already a username
     return trimmed
@@ -122,7 +124,7 @@ export function parseAndValidateCalLink(input: string, fallback: string = 'demo'
   console.warn('[nuxt-calcom] Parsed link failed validation, using fallback:', {
     input,
     parsed,
-    fallback
+    fallback,
   })
   return fallback
 }

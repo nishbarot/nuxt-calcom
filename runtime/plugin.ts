@@ -41,7 +41,8 @@ export default defineNuxtPlugin(() => {
 
       pendingNamespaces.clear()
       console.log('[nuxt-calcom] All pending namespaces initialized')
-    } else {
+    }
+    else {
       // Cal not ready yet, try again quickly
       setTimeout(initializePendingNamespaces, 10)
     }
@@ -57,7 +58,8 @@ export default defineNuxtPlugin(() => {
         const checkCal = () => {
           if (typeof window.Cal === 'function') {
             resolve(window.Cal)
-          } else {
+          }
+          else {
             setTimeout(checkCal, 10)
           }
         }
@@ -69,7 +71,7 @@ export default defineNuxtPlugin(() => {
     },
 
     registerNamespace: (namespace: string, config?: Record<string, any>): Promise<void> => {
-      return new Promise(async resolve => {
+      return new Promise(async (resolve) => {
         console.log('[nuxt-calcom] Registering namespace:', namespace)
 
         if (initializedNamespaces.has(namespace)) {
@@ -95,13 +97,15 @@ export default defineNuxtPlugin(() => {
             }
 
             console.log('[nuxt-calcom] Namespace ready:', namespace)
-          } else {
+          }
+          else {
             // Cal not ready yet, it will be initialized when Cal loads
             console.log('[nuxt-calcom] Namespace queued for initialization:', namespace)
           }
 
           resolve()
-        } catch (error) {
+        }
+        catch (error) {
           console.error('[nuxt-calcom] Failed to register namespace:', namespace, error)
           resolve() // Don't reject to avoid breaking the app
         }
@@ -110,16 +114,16 @@ export default defineNuxtPlugin(() => {
 
     isNamespaceReady: (namespace: string): boolean => {
       return (
-        initializedNamespaces.has(namespace) &&
-        window.Cal?.ns &&
-        typeof window.Cal.ns[namespace] === 'function'
+        initializedNamespaces.has(namespace)
+        && window.Cal?.ns
+        && typeof window.Cal.ns[namespace] === 'function'
       )
-    }
+    },
   }
 
   return {
     provide: {
-      calcom: calcomPlugin
-    }
+      calcom: calcomPlugin,
+    },
   }
 })

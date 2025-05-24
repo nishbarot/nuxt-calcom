@@ -24,7 +24,7 @@ export const useCalcom = (): CalcomAPI => {
       theme: calcomConfig?.theme,
       branding: calcomConfig?.branding,
       hideEventTypeDetails: calcomConfig?.hideEventTypeDetails,
-      ...calcomConfig?.uiOptions
+      ...calcomConfig?.uiOptions,
     }
   }
 
@@ -46,19 +46,19 @@ export const useCalcom = (): CalcomAPI => {
       if (rawCalLink !== calLink) {
         console.log('[nuxt-calcom] Normalized Cal.com link for popup:', {
           original: rawCalLink,
-          parsed: calLink
+          parsed: calLink,
         })
       }
 
       const mergedOptions = {
         ...getDefaultOptions(),
-        ...options.uiOptions
+        ...options.uiOptions,
       }
 
       if (options.namespace) {
         // Use namespace if provided
         window.Cal('init', options.namespace, {
-          origin: 'https://cal.com'
+          origin: 'https://cal.com',
         })
 
         if (window.Cal.ns && window.Cal.ns[options.namespace]) {
@@ -66,10 +66,11 @@ export const useCalcom = (): CalcomAPI => {
             window.Cal.ns[options.namespace]('ui', mergedOptions)
           }
           window.Cal.ns[options.namespace]('popup', {
-            calLink
+            calLink,
           })
         }
-      } else {
+      }
+      else {
         // Direct popup without namespace
         // First apply UI configuration if any
         if (Object.keys(mergedOptions).length > 0) {
@@ -84,7 +85,8 @@ export const useCalcom = (): CalcomAPI => {
       }
 
       console.log('[nuxt-calcom] Popup opened for:', calLink)
-    } catch (error) {
+    }
+    catch (error) {
       console.error('[nuxt-calcom] Failed to open popup:', error)
     }
   }
@@ -104,7 +106,8 @@ export const useCalcom = (): CalcomAPI => {
       // For non-namespaced or fallback, try to close any modal
       // Cal.com embeds are typically closed by user interaction
       console.log('[nuxt-calcom] Popup close requested')
-    } catch (error) {
+    }
+    catch (error) {
       console.error('[nuxt-calcom] Failed to close popup:', error)
     }
   }
@@ -121,6 +124,6 @@ export const useCalcom = (): CalcomAPI => {
     openPopup,
     closePopup,
     isLoaded,
-    waitForCal
+    waitForCal,
   }
 }

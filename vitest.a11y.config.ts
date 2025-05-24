@@ -11,14 +11,14 @@ export default defineConfig({
     include: ['tests/accessibility/**/*.test.ts'],
     reporters: ['verbose'],
     typecheck: {
-      enabled: false
-    }
+      enabled: false,
+    },
   },
   resolve: {
     alias: {
       '#app': resolve(__dirname, './tests/mocks/nuxt-app.ts'),
       '~': resolve(__dirname, './'),
-      '@': resolve(__dirname, './')
-    }
-  }
+      '@': resolve(__dirname, './'),
+    },
+  },
 })

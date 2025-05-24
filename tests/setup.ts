@@ -14,7 +14,7 @@ mockCal.ns = {}
 Object.defineProperty(global.window, 'Cal', {
   value: mockCal,
   writable: true,
-  configurable: true
+  configurable: true,
 })
 
 // Also set it directly for good measure
@@ -25,22 +25,22 @@ global.console = {
   ...console,
   log: vi.fn(),
   warn: vi.fn(),
-  error: vi.fn()
+  error: vi.fn(),
 }
 
 // Mock DOM methods that might be used
 Object.defineProperty(global.window, 'MutationObserver', {
   value: vi.fn().mockImplementation(() => ({
     observe: vi.fn(),
-    disconnect: vi.fn()
+    disconnect: vi.fn(),
   })),
-  configurable: true
+  configurable: true,
 })
 
 // Mock setTimeout and setInterval for testing
 vi.stubGlobal(
   'setTimeout',
-  vi.fn(fn => fn())
+  vi.fn(fn => fn()),
 )
 vi.stubGlobal('setInterval', vi.fn())
 vi.stubGlobal('clearInterval', vi.fn())

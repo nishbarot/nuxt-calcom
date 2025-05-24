@@ -14,11 +14,11 @@ export default defineNuxtConfig({
     defaultEmbed: 'inline',
     theme: 'light',
     branding: {
-      brandColor: '#667eea'
+      brandColor: '#667eea',
     },
     hideEventTypeDetails: false,
     uiOptions: {
-      layout: 'month_view'
-    }
-  }
+      layout: 'month_view',
+    },
+  },
 })

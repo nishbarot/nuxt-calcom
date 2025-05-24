@@ -31,7 +31,7 @@ export interface CalcomEventCallback {
 export const useCalcomEventListener = (
   eventType: CalcomEventType,
   callback: CalcomEventCallback,
-  namespace?: string
+  namespace?: string,
 ) => {
   const { $calcom } = useNuxtApp()
   let isListening = false
@@ -57,7 +57,7 @@ export const useCalcomEventListener = (
       // Register the event listener with Cal.com using official API
       window.Cal('on', {
         action: eventType,
-        callback: eventHandler
+        callback: eventHandler,
       })
 
       isListening = true
@@ -70,16 +70,18 @@ export const useCalcomEventListener = (
             // Most Cal.com events are handled by the embed itself
             console.log(`[nuxt-calcom] Removing listener for: ${eventType}`)
           }
-        } catch (error) {
+        }
+        catch (error) {
           console.error('[nuxt-calcom] Failed to remove event listener:', error)
         }
         isListening = false
       }
 
       console.log(
-        `[nuxt-calcom] Listening for event: ${eventType}${namespace ? ` (namespace: ${namespace})` : ''}`
+        `[nuxt-calcom] Listening for event: ${eventType}${namespace ? ` (namespace: ${namespace})` : ''}`,
       )
-    } catch (error) {
+    }
+    catch (error) {
       console.error('[nuxt-calcom] Failed to register event listener:', error)
     }
   }
@@ -104,7 +106,7 @@ export const useCalcomEventListener = (
   return {
     startListening,
     stopListening,
-    isListening: () => isListening
+    isListening: () => isListening,
   }
 }
 

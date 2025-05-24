@@ -7,8 +7,8 @@ vi.mock('#app', () => ({
     $calcom: {
       waitForCal: vi.fn().mockResolvedValue(window.Cal),
       registerNamespace: vi.fn().mockResolvedValue(undefined),
-      isNamespaceReady: vi.fn().mockReturnValue(true)
-    }
+      isNamespaceReady: vi.fn().mockReturnValue(true),
+    },
   }),
   useRuntimeConfig: () => ({
     public: {
@@ -17,10 +17,10 @@ vi.mock('#app', () => ({
         theme: 'light',
         branding: { brandColor: '#007BFF' },
         hideEventTypeDetails: false,
-        uiOptions: { layout: 'month_view' }
-      }
-    }
-  })
+        uiOptions: { layout: 'month_view' },
+      },
+    },
+  }),
 }))
 
 describe('useCalcom', () => {
@@ -34,7 +34,7 @@ describe('useCalcom', () => {
     mockCal = vi.fn()
     Object.assign(mockCal, {
       loaded: true,
-      ns: {}
+      ns: {},
     })
 
     // Update the existing Cal property instead of redefining it
@@ -53,8 +53,8 @@ describe('useCalcom', () => {
           theme: 'light',
           branding: { brandColor: '#007BFF' },
           hideEventTypeDetails: false,
-          layout: 'month_view'
-        })
+          layout: 'month_view',
+        }),
       )
 
       expect(mockCal).toHaveBeenCalledWith('preload', { calLink: 'demo' })
@@ -66,7 +66,7 @@ describe('useCalcom', () => {
 
       await openPopup({
         calLink: 'custom/meeting',
-        uiOptions: { theme: 'dark' }
+        uiOptions: { theme: 'dark' },
       })
 
       expect(mockCal).toHaveBeenCalledWith(
@@ -75,8 +75,8 @@ describe('useCalcom', () => {
           theme: 'dark',
           branding: { brandColor: '#007BFF' },
           hideEventTypeDetails: false,
-          layout: 'month_view'
-        })
+          layout: 'month_view',
+        }),
       )
 
       expect(mockCal).toHaveBeenCalledWith('preload', { calLink: 'custom/meeting' })
@@ -93,15 +93,15 @@ describe('useCalcom', () => {
       await openPopup({
         calLink: 'test/meeting',
         namespace: 'test-namespace',
-        uiOptions: { theme: 'dark' }
+        uiOptions: { theme: 'dark' },
       })
 
       expect(mockCal).toHaveBeenCalledWith('init', 'test-namespace', { origin: 'https://cal.com' })
       expect(namespaceMock).toHaveBeenCalledWith(
         'ui',
         expect.objectContaining({
-          theme: 'dark'
-        })
+          theme: 'dark',
+        }),
       )
       expect(namespaceMock).toHaveBeenCalledWith('popup', { calLink: 'test/meeting' })
     })
@@ -110,7 +110,7 @@ describe('useCalcom', () => {
       const { openPopup } = useCalcom()
 
       await openPopup({
-        calLink: 'https://cal.com/user/30min'
+        calLink: 'https://cal.com/user/30min',
       })
 
       expect(mockCal).toHaveBeenCalledWith('preload', { calLink: 'user/30min' })

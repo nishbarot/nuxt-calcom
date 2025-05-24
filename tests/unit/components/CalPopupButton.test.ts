@@ -12,17 +12,17 @@ vi.mock('#app', () => ({
         theme: 'light',
         branding: {},
         hideEventTypeDetails: false,
-        uiOptions: {}
-      }
-    }
+        uiOptions: {},
+      },
+    },
   })),
   useNuxtApp: () => ({
     $calcom: {
       waitForCal: vi.fn().mockResolvedValue(window.Cal),
       registerNamespace: vi.fn().mockResolvedValue(undefined),
-      isNamespaceReady: vi.fn().mockReturnValue(true)
-    }
-  })
+      isNamespaceReady: vi.fn().mockReturnValue(true),
+    },
+  }),
 }))
 
 describe('CalPopupButton', () => {
@@ -37,7 +37,7 @@ describe('CalPopupButton', () => {
     Object.defineProperty(window, 'Cal', {
       value: mockCal,
       writable: true,
-      configurable: true
+      configurable: true,
     })
   })
 
@@ -52,8 +52,8 @@ describe('CalPopupButton', () => {
     it('should render with custom text', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          text: 'Book Now'
-        }
+          text: 'Book Now',
+        },
       })
 
       expect(wrapper.text()).toBe('Book Now')
@@ -62,8 +62,8 @@ describe('CalPopupButton', () => {
     it('should render with custom button class', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          buttonClass: 'custom-button-class'
-        }
+          buttonClass: 'custom-button-class',
+        },
       })
 
       expect(wrapper.find('button').classes()).toContain('custom-button-class')
@@ -72,8 +72,8 @@ describe('CalPopupButton', () => {
     it('should render with custom button style', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          buttonStyle: { backgroundColor: 'red', color: 'white' }
-        }
+          buttonStyle: { backgroundColor: 'red', color: 'white' },
+        },
       })
 
       const button = wrapper.find('button')
@@ -84,8 +84,8 @@ describe('CalPopupButton', () => {
     it('should render slot content', () => {
       const wrapper = mount(CalPopupButton, {
         slots: {
-          default: '<span>Custom Content</span>'
-        }
+          default: '<span>Custom Content</span>',
+        },
       })
 
       expect(wrapper.html()).toContain('<span>Custom Content</span>')
@@ -96,8 +96,8 @@ describe('CalPopupButton', () => {
     it('should use provided calLink', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          calLink: 'custom/meeting'
-        }
+          calLink: 'custom/meeting',
+        },
       })
 
       const button = wrapper.find('button')
@@ -114,8 +114,8 @@ describe('CalPopupButton', () => {
     it('should parse Cal.com URLs correctly', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          calLink: 'https://cal.com/user/30min'
-        }
+          calLink: 'https://cal.com/user/30min',
+        },
       })
 
       const button = wrapper.find('button')
@@ -125,8 +125,8 @@ describe('CalPopupButton', () => {
     it('should merge UI options correctly', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          uiOptions: { theme: 'dark', customOption: true }
-        }
+          uiOptions: { theme: 'dark', customOption: true },
+        },
       })
 
       const button = wrapper.find('button')
@@ -147,7 +147,7 @@ describe('CalPopupButton', () => {
 
       expect(button1.attributes('id')).not.toBe(button2.attributes('id'))
       expect(button1.attributes('data-cal-namespace')).not.toBe(
-        button2.attributes('data-cal-namespace')
+        button2.attributes('data-cal-namespace'),
       )
     })
   })
@@ -171,8 +171,8 @@ describe('CalPopupButton', () => {
     it('should have proper ARIA attributes when needed', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          text: 'Schedule Meeting'
-        }
+          text: 'Schedule Meeting',
+        },
       })
 
       const button = wrapper.find('button')
@@ -202,8 +202,8 @@ describe('CalPopupButton', () => {
       // Mock config to not have defaultLink
       vi.mocked(useRuntimeConfig).mockReturnValue({
         public: {
-          calcom: {}
-        }
+          calcom: {},
+        },
       } as any)
 
       const wrapper = mount(CalPopupButton)
@@ -215,8 +215,8 @@ describe('CalPopupButton', () => {
     it('should handle invalid UI options gracefully', () => {
       const wrapper = mount(CalPopupButton, {
         props: {
-          uiOptions: null as any
-        }
+          uiOptions: null as any,
+        },
       })
 
       expect(wrapper.exists()).toBe(true)

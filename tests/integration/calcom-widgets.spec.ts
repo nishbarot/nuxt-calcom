@@ -38,7 +38,7 @@ test.describe('Cal.com Widgets Integration', () => {
     test('should load Cal.com iframe in inline widget', async ({ page }) => {
       // Wait for Cal.com script to load
       await page.waitForFunction(() => window.Cal && typeof window.Cal === 'function', {
-        timeout: 10000
+        timeout: 10000,
       })
 
       // Wait for iframe to appear (Cal.com creates iframes)
@@ -91,7 +91,7 @@ test.describe('Cal.com Widgets Integration', () => {
     test('should open popup when clicked', async ({ page }) => {
       // Wait for Cal.com script to be ready
       await page.waitForFunction(() => window.Cal && typeof window.Cal === 'function', {
-        timeout: 10000
+        timeout: 10000,
       })
 
       const popupButton = page.locator('button:has-text("Book:")').first()
@@ -102,7 +102,7 @@ test.describe('Cal.com Widgets Integration', () => {
       // Wait for popup/modal to appear
       // Cal.com typically creates a modal overlay
       await expect(page.locator('[role="dialog"], .cal-modal, iframe')).toBeVisible({
-        timeout: 5000
+        timeout: 5000,
       })
     })
 
@@ -132,7 +132,7 @@ test.describe('Cal.com Widgets Integration', () => {
     test('should be clickable and open popup', async ({ page }) => {
       // Wait for Cal.com script
       await page.waitForFunction(() => window.Cal && typeof window.Cal === 'function', {
-        timeout: 10000
+        timeout: 10000,
       })
 
       const floatingButton = page.locator('.cal-floating-widget button')
@@ -143,7 +143,7 @@ test.describe('Cal.com Widgets Integration', () => {
 
       // Should open popup
       await expect(page.locator('[role="dialog"], .cal-modal, iframe')).toBeVisible({
-        timeout: 5000
+        timeout: 5000,
       })
     })
 
@@ -219,7 +219,7 @@ test.describe('Cal.com Widgets Integration', () => {
     test('should not have console errors', async ({ page }) => {
       const errors: string[] = []
 
-      page.on('console', msg => {
+      page.on('console', (msg) => {
         if (msg.type() === 'error') {
           errors.push(msg.text())
         }
@@ -230,7 +230,7 @@ test.describe('Cal.com Widgets Integration', () => {
 
       // Filter out known acceptable errors (like network errors for blocked resources)
       const criticalErrors = errors.filter(
-        error => !error.includes('net::ERR_') && !error.includes('Failed to load resource')
+        error => !error.includes('net::ERR_') && !error.includes('Failed to load resource'),
       )
 
       expect(criticalErrors).toHaveLength(0)

@@ -8,12 +8,12 @@ export default createConfigForNuxt({
     stylistic: {
       indent: 2,
       quotes: 'single',
-      semi: false
-    }
+      semi: false,
+    },
   },
   dirs: {
-    src: ['./runtime', './src']
-  }
+    src: ['./runtime', './src'],
+  },
 }).append(
   // Global ignores
   {
@@ -33,8 +33,8 @@ export default createConfigForNuxt({
       'playwright-report/**',
       'test-results/**',
       '.vscode/**',
-      '.idea/**'
-    ]
+      '.idea/**',
+    ],
   },
   // Custom rules for the project
   {
@@ -52,8 +52,8 @@ export default createConfigForNuxt({
       'prefer-const': 'error',
       'no-var': 'error',
       'no-useless-escape': 'warn',
-      'no-async-promise-executor': 'warn'
-    }
+      'no-async-promise-executor': 'warn',
+    },
   },
   // Test files configuration
   {
@@ -61,14 +61,14 @@ export default createConfigForNuxt({
     rules: {
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      'no-console': 'off'
-    }
+      'no-console': 'off',
+    },
   },
   // Playground files configuration
   {
     files: ['playground/**/*'],
     rules: {
-      'no-console': 'off'
-    }
-  }
+      'no-console': 'off',
+    },
+  },
 )

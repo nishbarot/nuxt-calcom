@@ -16,26 +16,26 @@ export default defineConfig({
       'tests/integration/**',
       'tests/accessibility/**',
       '**/*.spec.ts',
-      '**/node_modules/**'
+      '**/node_modules/**',
     ],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['node_modules/', 'dist/', 'playground/', 'tests/', '**/*.d.ts', '**/*.config.*']
+      exclude: ['node_modules/', 'dist/', 'playground/', 'tests/', '**/*.d.ts', '**/*.config.*'],
     },
     typecheck: {
-      enabled: false
-    }
+      enabled: false,
+    },
   },
   resolve: {
     alias: {
       '#app': resolve(__dirname, './tests/mocks/nuxt-app.ts'),
       '~': resolve(__dirname, './'),
-      '@': resolve(__dirname, './')
-    }
+      '@': resolve(__dirname, './'),
+    },
   },
   define: {
     __VUE_OPTIONS_API__: true,
-    __VUE_PROD_DEVTOOLS__: false
-  }
+    __VUE_PROD_DEVTOOLS__: false,
+  },
 })
