@@ -168,6 +168,9 @@ _No critical issues at the moment._
 
 ### 05/25/2025
 
+- ✅ Fixed integration test build failures by updating package.json exports to use .d.mts instead of .d.ts and removing CommonJS support.
+- ✅ Created build.config.ts with failOnWarn: false to prevent @nuxt/module-builder warnings from failing the build.
+- ✅ Added unbuild as an explicit dev dependency to resolve TypeScript configuration issues.
 - ✅ Fixed CI errors related to missing `.nuxt/tsconfig.json` by adding a `pnpm dev:prepare` step to the workflow.
 - ✅ Migrated ESLint ignore patterns from `.eslintignore` to `eslint.config.js` and removed `.eslintignore`.
 - ✅ Ran `pnpm lint:fix` to resolve auto-fixable linting issues.
