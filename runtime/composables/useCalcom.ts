@@ -1,0 +1,114 @@
+import { useNuxtApp, useRuntimeConfig } from '#app'
+
+export interface CalcomOptions {
+  calLink?: string
+  uiOptions?: Record<string, any>
+  namespace?: string
+}
+
+export interface CalcomAPI {
+  openPopup: (options?: CalcomOptions) => Promise<void>
+  closePopup: (namespace?: string) => Promise<void>
+  isLoaded: () => boolean
+  waitForCal: () => Promise<any>
+}
+
+export const useCalcom = (): CalcomAPI => {
+  const { $calcom } = useNuxtApp()
+  const config = useRuntimeConfig()
+
+  const getDefaultOptions = (): Record<string, any> => {
+    const calcomConfig = config.public.calcom as any
+    return {
+      theme: calcomConfig?.theme,
+      branding: calcomConfig?.branding,
+      hideEventTypeDetails: calcomConfig?.hideEventTypeDetails,
+      ...calcomConfig?.uiOptions
+    }
+  }
+
+  const openPopup = async (options: CalcomOptions = {}) => {
+    try {
+      await $calcom.waitForCal()
+      
+      const calcomConfig = config.public.calcom as any
+      const calLink = options.calLink || calcomConfig?.defaultLink
+      if (!calLink) {
+        console.warn('[nuxt-calcom] No calLink provided for popup')
+        return
+      }
+
+      const mergedOptions = {
+        ...getDefaultOptions(),
+        ...options.uiOptions
+      }
+
+      if (options.namespace) {
+        // Use namespace if provided
+        window.Cal('init', options.namespace, {
+          origin: 'https://cal.com'
+        })
+        
+        if (window.Cal.ns && window.Cal.ns[options.namespace]) {
+          if (Object.keys(mergedOptions).length > 0) {
+            window.Cal.ns[options.namespace]('ui', mergedOptions)
+          }
+          window.Cal.ns[options.namespace]('popup', {
+            calLink
+          })
+        }
+      } else {
+        // Direct popup without namespace
+        // First apply UI configuration if any
+        if (Object.keys(mergedOptions).length > 0) {
+          window.Cal('ui', mergedOptions)
+        }
+        
+        // Preload the calendar for instant opening
+        window.Cal('preload', { calLink })
+        
+        // Open popup
+        window.Cal('popup', { calLink })
+      }
+
+      console.log('[nuxt-calcom] Popup opened for:', calLink)
+    } catch (error) {
+      console.error('[nuxt-calcom] Failed to open popup:', error)
+    }
+  }
+
+  const closePopup = async (namespace?: string) => {
+    try {
+      await $calcom.waitForCal()
+      
+      if (namespace && window.Cal.ns && window.Cal.ns[namespace]) {
+        // Close specific namespace popup if available
+        if (typeof window.Cal.ns[namespace] === 'function') {
+          // Cal.com doesn't have a standard close method, so we try common approaches
+          window.Cal.ns[namespace]('close')
+        }
+      }
+      
+      // For non-namespaced or fallback, try to close any modal
+      // Cal.com embeds are typically closed by user interaction
+      console.log('[nuxt-calcom] Popup close requested')
+    } catch (error) {
+      console.error('[nuxt-calcom] Failed to close popup:', error)
+    }
+  }
+
+  const isLoaded = (): boolean => {
+    return typeof window !== 'undefined' && !!window.Cal && !!window.Cal.loaded
+  }
+
+  const waitForCal = async (): Promise<any> => {
+    return $calcom.waitForCal()
+  }
+
+  return {
+    openPopup,
+    closePopup,
+    isLoaded,
+    waitForCal
+  }
+} 
