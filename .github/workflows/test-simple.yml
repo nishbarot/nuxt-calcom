@@ -2,6 +2,9 @@ name: Simple Test (Validation)
 
 on:
   workflow_dispatch: # Manual trigger for testing
+  push: # Also trigger on push for main branch
+    branches:
+      - main
 
 jobs:
   validate-setup:
@@ -35,6 +38,9 @@ jobs:
 
       - name: Prepare Nuxt (generate .nuxt directory)
         run: pnpm dev:prepare
+
+      - name: Remove .eslintignore if it exists
+        run: rm -f .eslintignore
 
       - name: Check for .nuxt directory and tsconfig.json
         run: |
