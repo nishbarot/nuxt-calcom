@@ -59,7 +59,7 @@ export default defineNuxtConfig({
 
   calcom: {
     // Your default Cal.com link (e.g., your-username/event-type)
-    defaultLink: 'demo', // Replace 'demo' with your actual Cal.com link
+    defaultLink: 'demo' // Replace 'demo' with your actual Cal.com link
 
     // Optional: Default theme for all widgets
     // theme: 'light', // 'light' | 'dark' | 'auto'
@@ -72,6 +72,7 @@ export default defineNuxtConfig({
 Embed Cal.com widgets anywhere in your Nuxt application:
 
 **Inline Widget:**
+
 ```vue
 <template>
   <div>
@@ -82,6 +83,7 @@ Embed Cal.com widgets anywhere in your Nuxt application:
 ```
 
 **Popup Button:**
+
 ```vue
 <template>
   <CalPopupButton
@@ -93,6 +95,7 @@ Embed Cal.com widgets anywhere in your Nuxt application:
 ```
 
 **Floating Widget:**
+
 ```vue
 <template>
   <!-- This will float over your page content -->
@@ -127,7 +130,7 @@ export default defineNuxtConfig({
 
     // Global branding options
     branding: {
-      brandColor: '#007BFF',      // Your primary brand color
+      brandColor: '#007BFF', // Your primary brand color
       darkBrandColor: '#1A8CFF' // Brand color for dark mode
     },
 
@@ -136,12 +139,13 @@ export default defineNuxtConfig({
 
     // Default UI options applied to all widgets
     uiOptions: {
-      layout: 'month_view', // 'month_view' | 'week_view' | 'column_view'
+      layout: 'month_view' // 'month_view' | 'week_view' | 'column_view'
       // styles: { /* Custom CSS properties for advanced styling */ }
     }
   }
 })
 ```
+
 > **Note:** Providing `defaultLink` in the configuration is highly recommended. Components will fall back to this link if no `cal-link` prop is provided.
 
 ---
@@ -169,6 +173,7 @@ Embeds a Cal.com calendar directly into your page content.
 ```
 
 **Key Props:**
+
 - `calLink?: string`: Your Cal.com link (e.g., `username/event`). Falls back to `defaultLink` from module config.
 - `height?: string | number`: Height of the widget (default: `630px`).
 - `width?: string | number`: Width of the widget (default: `100%`).
@@ -194,6 +199,7 @@ Renders a button that, when clicked, opens the Cal.com scheduling interface in a
 ```
 
 **Key Props:**
+
 - `calLink?: string`: Your Cal.com link.
 - `text?: string`: Text displayed on the button (default: `Schedule Meeting`). Can be overridden by slot.
 - `buttonClass?: string`: Custom CSS class(es) for the button.
@@ -220,6 +226,7 @@ Displays a floating button that remains visible on the page, opening a popup whe
 ```
 
 **Key Props:**
+
 - `calLink?: string`: Your Cal.com link.
 - `text?: string`: Text for the button (default: `📅 Schedule`). Can be overridden by slot.
 - `position?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'`: Position on the screen.
@@ -249,7 +256,7 @@ Provides methods to control Cal.com widgets.
 const { openPopup, closePopup, isLoaded, waitForCal } = useCalcom()
 
 async function showSpecialOfferBooking() {
-  await waitForCal(); // Ensure Cal.com script is loaded
+  await waitForCal() // Ensure Cal.com script is loaded
   openPopup({
     calLink: 'marketing/special-offer',
     uiOptions: {
@@ -260,7 +267,7 @@ async function showSpecialOfferBooking() {
         email: 'customer@example.com'
       }
     }
-  });
+  })
 }
 </script>
 
@@ -270,6 +277,7 @@ async function showSpecialOfferBooking() {
 ```
 
 **Key Methods:**
+
 - `openPopup(options)`: Opens a Cal.com scheduling popup. `options` can include `calLink` and `uiOptions`.
 - `closePopup(namespace?)`: Closes an active popup. Optionally specify a namespace.
 - `isLoaded()`: Returns `true` if the Cal.com embed script is loaded.
@@ -281,34 +289,35 @@ React to events triggered by the Cal.com widgets.
 
 ```vue
 <script setup lang="ts">
-import { useCalcomEventListener } from 'nuxt-calcom'; // Or auto-imported
+import { useCalcomEventListener } from 'nuxt-calcom' // Or auto-imported
 
 // On successful booking
-useCalcomEventListener('bookingSuccessful', (event) => {
-  console.log('Booking Confirmed:', event.data);
+useCalcomEventListener('bookingSuccessful', event => {
+  console.log('Booking Confirmed:', event.data)
   // Example: Redirect to a thank you page or show a notification
   // navigateTo('/booking-confirmed');
-});
+})
 
 // When an event type is selected by the user
-useCalcomEventListener('eventTypeSelected', (event) => {
-  console.log('Event Type Selected:', event.data.eventType);
-});
+useCalcomEventListener('eventTypeSelected', event => {
+  console.log('Event Type Selected:', event.data.eventType)
+})
 
 // When the Cal.com embed is fully ready
-useCalcomEventListener('embedReady', (event) => {
-  console.log('Cal.com Embed is Ready:', event.data);
-});
+useCalcomEventListener('embedReady', event => {
+  console.log('Cal.com Embed is Ready:', event.data)
+})
 </script>
 ```
 
 **Available Events (via `useCalcomEventListener(eventName, callback)`):**
+
 - `bookingSuccessful`: Triggered after a booking is successfully completed.
 - `eventTypeSelected`: When a user selects an event type from a list.
 - `dateSelected`: When a user selects a date.
 - `timeSelected`: When a user selects a time slot.
 - `embedReady`: When the Cal.com embed iframe has loaded its content.
-  *(This is a selection, refer to Cal.com embed documentation for a full list of actions.)*
+  _(This is a selection, refer to Cal.com embed documentation for a full list of actions.)_
 
 ---
 
@@ -319,6 +328,7 @@ Tailor the appearance of your Cal.com widgets.
 ### 1. Component Props
 
 Most visual aspects can be controlled via component props:
+
 - `buttonClass`, `buttonStyle` for buttons.
 - `size`, `variant`, `rounded`, `shadow` for `CalFloatingWidget`.
 - `uiOptions` on all components to pass Cal.com native styling (theme, brandColor, etc.).
@@ -336,6 +346,7 @@ Most visual aspects can be controlled via component props:
 Use slots to inject custom HTML content into buttons.
 
 **`CalPopupButton` Slot:**
+
 ```vue
 <CalPopupButton cal-link="demo/30min">
   <template #default>
@@ -346,6 +357,7 @@ Use slots to inject custom HTML content into buttons.
 ```
 
 **`CalFloatingWidget` Slot:**
+
 ```vue
 <CalFloatingWidget cal-link="demo/chat">
   <template #default>
@@ -389,6 +401,7 @@ For fine-grained control, you might be able to override some Cal.com internal st
 /* This is less robust and not generally recommended for external widgets */
 /* .cal-embed-container iframe { border: 2px solid hotpink !important; } */
 ```
+
 > **Recommendation**: Prefer using `uiOptions` and component props for styling, as directly targeting internal Cal.com classes can be brittle.
 
 ---
@@ -412,6 +425,7 @@ pnpm dev
 ```
 
 **Available Scripts:**
+
 - `pnpm dev`: Starts the development playground.
 - `pnpm build`: Builds the module for production.
 - `pnpm lint`: Lints the codebase.

@@ -1,0 +1,29 @@
+# Build outputs
+dist/
+.nuxt/
+.output/
+coverage/
+
+# Dependencies
+node_modules/
+
+# Generated files
+*.d.ts
+pnpm-lock.yaml
+
+# Artifacts and temporary files
+artifacts/
+docs/
+temp/
+
+# Playground build
+playground/.nuxt/
+playground/dist/
+
+# Test reports
+playwright-report/
+test-results/
+
+# IDE files
+.vscode/
+.idea/ 

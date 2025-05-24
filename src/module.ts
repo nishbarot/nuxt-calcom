@@ -1,4 +1,10 @@
-import { defineNuxtModule, createResolver, addComponentsDir, addPlugin, addImportsDir } from '@nuxt/kit'
+import {
+  defineNuxtModule,
+  createResolver,
+  addComponentsDir,
+  addPlugin,
+  addImportsDir
+} from '@nuxt/kit'
 
 export interface ModuleOptions {
   /**

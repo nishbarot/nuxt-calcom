@@ -7,7 +7,8 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.6;
 }
 
@@ -64,12 +65,12 @@ body {
   .playground-content {
     padding: 1rem;
   }
-  
+
   .test-section {
     padding: 1rem;
   }
-  
+
   .button-group {
     flex-direction: column;
   }
-} 
+}

@@ -1,17 +1,12 @@
 <template>
   <ClientOnly>
     <div>
-      <div
-        :id="containerId"
-        ref="containerRef"
-        class="cal-inline-widget"
-        :style="containerStyle"
-      />
+      <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
     </div>
     <template #fallback>
       <div class="cal-loading-placeholder" :style="containerStyle">
         <div class="loading-content">
-          <div class="loading-spinner"></div>
+          <div class="loading-spinner" />
           <p>Loading Cal.com calendar...</p>
         </div>
       </div>
@@ -21,8 +16,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
-import { useRuntimeConfig, useNuxtApp } from '#app'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
+import { useRuntimeConfig, useNuxtApp } from '#app'
 
 interface Props {
   calLink?: string
@@ -49,20 +44,20 @@ const containerId = ref(`cal-inline-${Math.random().toString(36).substr(2, 9)}`)
 const calLink = computed(() => {
   const calcomConfig = config.public.calcom as any
   const rawLink = props.calLink || calcomConfig?.defaultLink
-  
+
   if (!rawLink) {
     console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
     return 'demo' // fallback to demo
   }
-  
+
   // Parse and validate the link to handle both username and full URL formats
   const parsedLink = parseAndValidateCalLink(rawLink, 'demo')
-  
+
   // Log the transformation for debugging
   if (rawLink !== parsedLink) {
     console.log('[nuxt-calcom] Normalized Cal.com link:', { original: rawLink, parsed: parsedLink })
   }
-  
+
   return parsedLink
 })
 
@@ -95,33 +90,33 @@ const initializeEmbed = async () => {
     console.log('[DEBUG] Starting inline embed initialization...')
     console.log('[DEBUG] Container ID:', containerId.value)
     console.log('[DEBUG] Cal link:', calLink.value)
-    
+
     // Wait for Cal to be available first
     await $calcom.waitForCal()
     console.log('[DEBUG] Cal.com script ready')
-    
+
     // Ensure Vue has finished rendering the DOM
     await nextTick()
-    
+
     // Wait a bit more for hydration to complete
     await new Promise(resolve => setTimeout(resolve, 100))
-    
+
     // Now check if element exists using both methods
     const elementById = document.getElementById(containerId.value)
     const elementByRef = containerRef.value
-    
+
     console.log('[DEBUG] Element by ID:', !!elementById, elementById)
     console.log('[DEBUG] Element by ref:', !!elementByRef, elementByRef)
-    
+
     const element = elementByRef || elementById
-    
+
     if (!element) {
       console.error('[DEBUG] Element still not found! DOM state:', {
         documentReady: document.readyState,
         bodyChildren: document.body?.children.length,
         containerId: containerId.value
       })
-      
+
       // Try one more time after a longer delay
       if (retryCount < 5) {
         retryCount++
@@ -140,7 +135,7 @@ const initializeEmbed = async () => {
       setTimeout(() => initializeEmbed(), 100)
       return
     }
-    
+
     console.log('[DEBUG] Element ready, initializing embed...')
     console.log('[DEBUG] Element details:', {
       id: element.id,
@@ -148,14 +143,14 @@ const initializeEmbed = async () => {
       offsetHeight: element.offsetHeight,
       parentElement: element.parentElement
     })
-    
+
     // Use the official Cal.com inline API exactly as documented
     console.log('[DEBUG] Calling Cal inline with params:', {
       elementOrSelector: `#${containerId.value}`,
       calLink: calLink.value,
       config: computedUiOptions.value
     })
-    
+
     window.Cal('inline', {
       elementOrSelector: `#${containerId.value}`,
       calLink: calLink.value,
@@ -187,10 +182,10 @@ const destroyEmbed = () => {
 onMounted(async () => {
   console.log('[DEBUG] Component mounted, containerRef.value:', containerRef.value)
   console.log('[DEBUG] Document ready state:', document.readyState)
-  
+
   // Wait for next tick to ensure DOM is fully rendered
   await nextTick()
-  
+
   // Additional delay to ensure hydration is complete
   setTimeout(() => {
     console.log('[DEBUG] Starting initialization after mount delay')
@@ -235,7 +230,11 @@ onUnmounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
-</style> 
+</style>

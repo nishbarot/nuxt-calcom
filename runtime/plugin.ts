@@ -12,7 +12,7 @@ const initializedNamespaces = new Set<string>()
 
 export default defineNuxtPlugin(() => {
   // Only run on client-side
-  if (process.server) return
+  if (import.meta.server) return
 
   // Official Cal.com embed loader (exactly from their docs)
   const script = document.createElement('script')
@@ -23,14 +23,14 @@ export default defineNuxtPlugin(() => {
   const initializePendingNamespaces = () => {
     if (typeof window.Cal === 'function') {
       console.log('[nuxt-calcom] Cal.com script loaded, initializing pending namespaces...')
-      
+
       // Initialize all pending namespaces IMMEDIATELY
       pendingNamespaces.forEach((config, namespace) => {
         if (!initializedNamespaces.has(namespace)) {
           console.log('[nuxt-calcom] Initializing namespace:', namespace)
           window.Cal('init', namespace, { origin: 'https://cal.com' })
           initializedNamespaces.add(namespace)
-          
+
           // Apply config immediately
           if (config && Object.keys(config).length > 0) {
             console.log('[nuxt-calcom] Applying config to namespace:', namespace, config)
@@ -38,7 +38,7 @@ export default defineNuxtPlugin(() => {
           }
         }
       })
-      
+
       pendingNamespaces.clear()
       console.log('[nuxt-calcom] All pending namespaces initialized')
     } else {
@@ -62,16 +62,16 @@ export default defineNuxtPlugin(() => {
           }
         }
         checkCal()
-        
+
         // Timeout after 10 seconds
         setTimeout(() => reject(new Error('Cal.com script failed to load')), 10000)
       })
     },
 
     registerNamespace: (namespace: string, config?: Record<string, any>): Promise<void> => {
-      return new Promise(async (resolve) => {
+      return new Promise(async resolve => {
         console.log('[nuxt-calcom] Registering namespace:', namespace)
-        
+
         if (initializedNamespaces.has(namespace)) {
           console.log('[nuxt-calcom] Namespace already initialized:', namespace)
           resolve()
@@ -87,19 +87,19 @@ export default defineNuxtPlugin(() => {
             window.Cal('init', namespace, { origin: 'https://cal.com' })
             initializedNamespaces.add(namespace)
             pendingNamespaces.delete(namespace)
-            
+
             // Apply config if provided
             if (config && Object.keys(config).length > 0) {
               console.log('[nuxt-calcom] Applying config to namespace:', namespace, config)
               window.Cal.ns[namespace]('ui', config)
             }
-            
+
             console.log('[nuxt-calcom] Namespace ready:', namespace)
           } else {
             // Cal not ready yet, it will be initialized when Cal loads
             console.log('[nuxt-calcom] Namespace queued for initialization:', namespace)
           }
-          
+
           resolve()
         } catch (error) {
           console.error('[nuxt-calcom] Failed to register namespace:', namespace, error)
@@ -109,9 +109,11 @@ export default defineNuxtPlugin(() => {
     },
 
     isNamespaceReady: (namespace: string): boolean => {
-      return initializedNamespaces.has(namespace) && 
-             window.Cal?.ns && 
-             typeof window.Cal.ns[namespace] === 'function'
+      return (
+        initializedNamespaces.has(namespace) &&
+        window.Cal?.ns &&
+        typeof window.Cal.ns[namespace] === 'function'
+      )
     }
   }
 

@@ -1,7 +1,13 @@
 export default defineNuxtConfig({
   modules: ['../src/module'],
   devtools: { enabled: true },
-  
+
+  // Add CSS framework for better styling
+  css: ['~/assets/css/main.css'],
+
+  // Add compatibility date
+  compatibilityDate: '2024-04-03',
+
   // Configure the Cal.com module
   calcom: {
     defaultLink: 'demo',
@@ -14,11 +20,5 @@ export default defineNuxtConfig({
     uiOptions: {
       layout: 'month_view'
     }
-  },
-
-  // Add CSS framework for better styling
-  css: ['~/assets/css/main.css'],
-
-  // Add compatibility date
-  compatibilityDate: '2024-04-03'
-}) 
+  }
+})

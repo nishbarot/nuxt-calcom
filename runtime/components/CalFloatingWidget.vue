@@ -31,8 +31,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
-import { useRuntimeConfig, useNuxtApp } from '#app'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
+import { useRuntimeConfig, useNuxtApp } from '#app'
 
 interface Props {
   calLink?: string
@@ -79,20 +79,20 @@ const namespace = ref(`floating-${Math.random().toString(36).substr(2, 9)}`)
 const calLink = computed(() => {
   const calcomConfig = config.public.calcom as any
   const rawLink = props.calLink || calcomConfig?.defaultLink
-  
+
   if (!rawLink) {
     console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
     return 'demo' // fallback to demo
   }
-  
+
   // Parse and validate the link to handle both username and full URL formats
   const parsedLink = parseAndValidateCalLink(rawLink, 'demo')
-  
+
   // Log the transformation for debugging
   if (rawLink !== parsedLink) {
     console.log('[nuxt-calcom] Normalized Cal.com link:', { original: rawLink, parsed: parsedLink })
   }
-  
+
   return parsedLink
 })
 
@@ -148,33 +148,33 @@ const configString = computed(() => {
 // Compute dynamic button classes based on props
 const dynamicButtonClass = computed(() => {
   const classes = []
-  
+
   // Size classes
   classes.push(`cal-btn-${props.size}`)
-  
+
   // Variant classes
   classes.push(`cal-btn-${props.variant}`)
-  
+
   // Rounded class
   if (props.rounded) {
     classes.push('cal-btn-rounded')
   }
-  
+
   // Shadow class
   classes.push(`cal-btn-shadow-${props.shadow}`)
-  
+
   return classes.join(' ')
 })
 
 // Compute dynamic button style based on props
 const dynamicButtonStyle = computed(() => {
   const styles: Record<string, string> = {}
-  
+
   // Apply custom button styles
   if (props.buttonStyle) {
     Object.assign(styles, props.buttonStyle)
   }
-  
+
   return styles
 })
 
@@ -188,16 +188,18 @@ onMounted(async () => {
   console.log('[DEBUG] Widget ID:', widgetId.value)
   console.log('[DEBUG] Namespace:', namespace.value)
   console.log('[DEBUG] Cal link:', calLink.value)
-  
+
   // Only register namespace on client-side where $calcom is available
-  if (process.client && $calcom) {
+  if (import.meta.client && $calcom) {
     try {
       // Register the namespace immediately - this ensures it's ready before any clicks
       await $calcom.registerNamespace(namespace.value, computedUiOptions.value)
-      
+
       // Verify the namespace is ready
       if ($calcom.isNamespaceReady(namespace.value)) {
-        console.log('[nuxt-calcom] Floating widget ready - namespace properly initialized and ready for clicks')
+        console.log(
+          '[nuxt-calcom] Floating widget ready - namespace properly initialized and ready for clicks'
+        )
       } else {
         console.warn('[nuxt-calcom] Floating widget namespace not ready yet:', namespace.value)
         // Wait a bit and check again
@@ -205,7 +207,10 @@ onMounted(async () => {
           if ($calcom.isNamespaceReady(namespace.value)) {
             console.log('[nuxt-calcom] Floating widget ready (delayed) - namespace now ready')
           } else {
-            console.error('[nuxt-calcom] Floating widget namespace registration failed:', namespace.value)
+            console.error(
+              '[nuxt-calcom] Floating widget namespace registration failed:',
+              namespace.value
+            )
           }
         }, 100)
       }
@@ -213,7 +218,9 @@ onMounted(async () => {
       console.error('[nuxt-calcom] Failed to register floating widget namespace:', error)
     }
   } else {
-    console.log('[DEBUG] Skipping floating widget namespace registration - not on client or $calcom not available')
+    console.log(
+      '[DEBUG] Skipping floating widget namespace registration - not on client or $calcom not available'
+    )
   }
 })
 
@@ -224,7 +231,9 @@ onUnmounted(() => {
 
 <style scoped>
 .cal-floating-widget {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .cal-floating-hidden {

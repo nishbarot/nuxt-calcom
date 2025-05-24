@@ -1,7 +1,7 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useNuxtApp } from '#app'
 
-export type CalcomEventType = 
+export type CalcomEventType =
   | 'bookingSuccessfulV2'
   | 'eventTypeSelected'
   | 'eventTypeViewed'
@@ -42,14 +42,14 @@ export const useCalcomEventListener = (
 
     try {
       await $calcom.waitForCal()
-      
+
       // Create the event handler
       const eventHandler = (event: CalcomEventDetail) => {
         // Filter by namespace if provided
         if (namespace && event.namespace !== namespace) {
           return
         }
-        
+
         // Call the user's callback
         callback(event)
       }
@@ -76,7 +76,9 @@ export const useCalcomEventListener = (
         isListening = false
       }
 
-      console.log(`[nuxt-calcom] Listening for event: ${eventType}${namespace ? ` (namespace: ${namespace})` : ''}`)
+      console.log(
+        `[nuxt-calcom] Listening for event: ${eventType}${namespace ? ` (namespace: ${namespace})` : ''}`
+      )
     } catch (error) {
       console.error('[nuxt-calcom] Failed to register event listener:', error)
     }
@@ -110,30 +112,18 @@ export const useCalcomEventListener = (
  * Convenience hooks for common Cal.com events
  */
 
-export const useCalcomBookingSuccess = (
-  callback: CalcomEventCallback,
-  namespace?: string
-) => {
+export const useCalcomBookingSuccess = (callback: CalcomEventCallback, namespace?: string) => {
   return useCalcomEventListener('bookingSuccessfulV2', callback, namespace)
 }
 
-export const useCalcomEventTypeSelected = (
-  callback: CalcomEventCallback,
-  namespace?: string
-) => {
+export const useCalcomEventTypeSelected = (callback: CalcomEventCallback, namespace?: string) => {
   return useCalcomEventListener('eventTypeSelected', callback, namespace)
 }
 
-export const useCalcomEventTypeViewed = (
-  callback: CalcomEventCallback,
-  namespace?: string
-) => {
+export const useCalcomEventTypeViewed = (callback: CalcomEventCallback, namespace?: string) => {
   return useCalcomEventListener('eventTypeViewed', callback, namespace)
 }
 
-export const useCalcomEmbedReady = (
-  callback: CalcomEventCallback,
-  namespace?: string
-) => {
+export const useCalcomEmbedReady = (callback: CalcomEventCallback, namespace?: string) => {
   return useCalcomEventListener('embedReady', callback, namespace)
-} 
+}

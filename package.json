@@ -17,19 +17,47 @@
   ],
   "scripts": {
     "build": "nuxt-module-build build",
-    "dev": "nuxi dev playground",
-    "dev:build": "nuxi build playground",
-    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
+    "dev": "nuxt-module-build build --stub && nuxt dev playground",
+    "dev:build": "nuxt-module-build build --stub",
+    "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
     "lint": "eslint .",
-    "prepack": "pnpm build",
-    "release": "npm run lint && npm run prepack && changelogen --release && npm publish && git push --follow-tags"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "playwright test",
+    "test:accessibility": "vitest run --config vitest.a11y.config.ts",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepack": "nuxt-module-build build",
+    "prepare": "husky"
   },
   "dependencies": {
     "@nuxt/kit": "^3.17.4"
   },
   "devDependencies": {
+    "@nuxt/eslint-config": "^1.4.1",
     "@nuxt/module-builder": "^1.0.1",
+    "@nuxt/test-utils": "^3.19.0",
+    "@playwright/test": "^1.52.0",
+    "@testing-library/vue": "^8.1.0",
+    "@types/node": "^22.15.21",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "@vitest/coverage-v8": "^2.1.9",
+    "@vue/test-utils": "^2.4.6",
+    "axe-core": "^4.10.3",
+    "axe-playwright": "^2.1.0",
+    "changelogen": "^0.5.7",
+    "eslint": "^9.27.0",
+    "happy-dom": "^15.11.7",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
     "nuxt": "^3.17.4",
+    "playwright": "^1.52.0",
+    "prettier": "^3.5.3",
+    "vitest": "^2.1.9",
     "vue": "^3.5.14",
     "vue-router": "^4.5.1"
   },
@@ -46,5 +74,14 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yourusername/nuxt-calcom.git"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   }
 }

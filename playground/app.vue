@@ -8,10 +8,10 @@
     <section class="controls-section">
       <div class="input-group">
         <label for="calLinkInput">Enter Cal.com Link:</label>
-        <input 
-          id="calLinkInput" 
+        <input
+          id="calLinkInput"
           v-model.trim="userInputLink"
-          type="text" 
+          type="text"
           placeholder="demo-user or https://cal.com/demo-user/30min"
         />
         <div class="input-help">
@@ -22,18 +22,24 @@
             <li>Full URL: <code>https://cal.com/demo-user</code></li>
             <li>Full URL with event: <code>https://cal.com/demo-user/30min</code></li>
           </ul>
-          <p><em>The module automatically normalizes all formats to work with Cal.com widgets.</em></p>
+          <p>
+            <em>The module automatically normalizes all formats to work with Cal.com widgets.</em>
+          </p>
         </div>
       </div>
       <div class="status-info">
-        <p><strong>Status:</strong> 
-          <span :class="{ 'ok': isCalLoaded, 'not-ok': !isCalLoaded }">
+        <p>
+          <strong>Status:</strong>
+          <span :class="{ ok: isCalLoaded, 'not-ok': !isCalLoaded }">
             Cal.com Script {{ isCalLoaded ? 'Loaded' : 'Not Loaded' }}
           </span>
         </p>
-        <p><strong>Current Link for Widgets:</strong> <code>{{ effectiveCalLink }}</code></p>
+        <p>
+          <strong>Current Link for Widgets:</strong> <code>{{ effectiveCalLink }}</code>
+        </p>
         <p v-if="userInputLink && userInputLink !== effectiveCalLink" class="normalization-info">
-          <strong>Normalized from:</strong> <code>{{ userInputLink }}</code> → <code>{{ effectiveCalLink }}</code>
+          <strong>Normalized from:</strong> <code>{{ userInputLink }}</code> →
+          <code>{{ effectiveCalLink }}</code>
         </p>
       </div>
     </section>
@@ -42,13 +48,15 @@
       <!-- Inline Widget -->
       <section class="widget-test-card">
         <h2>📋 Inline Widget</h2>
-        <p class="widget-description">Embeds the calendar directly in the page. Try pasting a full Cal.com URL above!</p>
+        <p class="widget-description">
+          Embeds the calendar directly in the page. Try pasting a full Cal.com URL above!
+        </p>
         <ClientOnly fallback-tag="div" fallback="Loading inline widget...">
-          <CalInlineWidget 
-            :key="effectiveCalLink" 
+          <CalInlineWidget
+            :key="effectiveCalLink"
             :cal-link="effectiveCalLink"
             :height="500"
-            style="border: 1px solid #ccc; border-radius: 8px; min-height: 500px;"
+            style="border: 1px solid #ccc; border-radius: 8px; min-height: 500px"
           />
         </ClientOnly>
       </section>
@@ -58,9 +66,9 @@
         <h2>🎯 Popup Button</h2>
         <p class="widget-description">Opens the calendar in a modal popup when clicked.</p>
         <ClientOnly fallback-tag="div" fallback="Loading popup button...">
-          <CalPopupButton 
-            :key="effectiveCalLink + '-popup'" 
-            :cal-link="effectiveCalLink" 
+          <CalPopupButton
+            :key="effectiveCalLink + '-popup'"
+            :cal-link="effectiveCalLink"
             :text="`Book: ${effectiveCalLink}`"
             button-class="test-popup-button"
           />
@@ -71,7 +79,7 @@
     </main>
 
     <ClientOnly>
-      <CalFloatingWidget 
+      <CalFloatingWidget
         :key="effectiveCalLink + '-floating'"
         :cal-link="effectiveCalLink"
         :text="`Float: ${effectiveCalLink}`"
@@ -118,10 +126,11 @@ onMounted(() => {
   const observer = new MutationObserver(() => {
     if (window.Cal) {
       checkCalStatus()
-      if (!isCalLoaded.value) { // To avoid logging multiple times if already loaded
+      if (!isCalLoaded.value) {
+        // To avoid logging multiple times if already loaded
         console.log('[Playground] Cal.com script now loaded!')
       }
-      isCalLoaded.value = true; 
+      isCalLoaded.value = true
     }
   })
   observer.observe(document.head, { childList: true, subtree: true })
@@ -130,7 +139,7 @@ onMounted(() => {
 
 <style scoped>
 .dev-playground {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.6;
   color: #333;
   background-color: #f4f7f9;
@@ -144,7 +153,7 @@ onMounted(() => {
   background-color: #fff;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
   margin-bottom: 1.5rem;
 }
@@ -165,7 +174,7 @@ onMounted(() => {
   background-color: #fff;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
   margin-bottom: 1.5rem;
 }
 
@@ -180,7 +189,7 @@ onMounted(() => {
   color: #333;
 }
 
-.input-group input[type="text"] {
+.input-group input[type='text'] {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid #d1d5db;
@@ -189,7 +198,7 @@ onMounted(() => {
   box-sizing: border-box;
 }
 
-.input-group input[type="text"]:focus {
+.input-group input[type='text']:focus {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
@@ -264,7 +273,7 @@ onMounted(() => {
   background-color: #fff;
   padding: 1.5rem;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .widget-test-card h2 {
@@ -311,4 +320,4 @@ onMounted(() => {
   margin-top: 0.5rem;
   color: #9ca3af;
 }
-</style> 
+</style>

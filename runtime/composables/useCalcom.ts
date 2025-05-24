@@ -1,5 +1,5 @@
-import { useNuxtApp, useRuntimeConfig } from '#app'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
+import { useNuxtApp, useRuntimeConfig } from '#app'
 
 export interface CalcomOptions {
   calLink?: string
@@ -31,7 +31,7 @@ export const useCalcom = (): CalcomAPI => {
   const openPopup = async (options: CalcomOptions = {}) => {
     try {
       await $calcom.waitForCal()
-      
+
       const calcomConfig = config.public.calcom as any
       const rawCalLink = options.calLink || calcomConfig?.defaultLink
       if (!rawCalLink) {
@@ -41,10 +41,13 @@ export const useCalcom = (): CalcomAPI => {
 
       // Parse and validate the Cal.com link to handle both formats
       const calLink = parseAndValidateCalLink(rawCalLink, 'demo')
-      
+
       // Log the transformation for debugging
       if (rawCalLink !== calLink) {
-        console.log('[nuxt-calcom] Normalized Cal.com link for popup:', { original: rawCalLink, parsed: calLink })
+        console.log('[nuxt-calcom] Normalized Cal.com link for popup:', {
+          original: rawCalLink,
+          parsed: calLink
+        })
       }
 
       const mergedOptions = {
@@ -57,7 +60,7 @@ export const useCalcom = (): CalcomAPI => {
         window.Cal('init', options.namespace, {
           origin: 'https://cal.com'
         })
-        
+
         if (window.Cal.ns && window.Cal.ns[options.namespace]) {
           if (Object.keys(mergedOptions).length > 0) {
             window.Cal.ns[options.namespace]('ui', mergedOptions)
@@ -72,10 +75,10 @@ export const useCalcom = (): CalcomAPI => {
         if (Object.keys(mergedOptions).length > 0) {
           window.Cal('ui', mergedOptions)
         }
-        
+
         // Preload the calendar for instant opening
         window.Cal('preload', { calLink })
-        
+
         // Open popup
         window.Cal('popup', { calLink })
       }
@@ -89,7 +92,7 @@ export const useCalcom = (): CalcomAPI => {
   const closePopup = async (namespace?: string) => {
     try {
       await $calcom.waitForCal()
-      
+
       if (namespace && window.Cal.ns && window.Cal.ns[namespace]) {
         // Close specific namespace popup if available
         if (typeof window.Cal.ns[namespace] === 'function') {
@@ -97,7 +100,7 @@ export const useCalcom = (): CalcomAPI => {
           window.Cal.ns[namespace]('close')
         }
       }
-      
+
       // For non-namespaced or fallback, try to close any modal
       // Cal.com embeds are typically closed by user interaction
       console.log('[nuxt-calcom] Popup close requested')
@@ -120,4 +123,4 @@ export const useCalcom = (): CalcomAPI => {
     isLoaded,
     waitForCal
   }
-} 
+}

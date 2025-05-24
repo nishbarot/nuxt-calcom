@@ -12,11 +12,7 @@
       <slot>{{ text }}</slot>
     </button>
     <template #fallback>
-      <button
-        :class="buttonClass"
-        :style="buttonStyle"
-        disabled
-      >
+      <button :class="buttonClass" :style="buttonStyle" disabled>
         <slot>{{ text }}</slot>
       </button>
     </template>
@@ -25,8 +21,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
-import { useRuntimeConfig, useNuxtApp } from '#app'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
+import { useRuntimeConfig, useNuxtApp } from '#app'
 
 interface Props {
   calLink?: string
@@ -53,20 +49,20 @@ const namespace = ref(`popup-${Math.random().toString(36).substr(2, 9)}`)
 const calLink = computed(() => {
   const calcomConfig = config.public.calcom as any
   const rawLink = props.calLink || calcomConfig?.defaultLink
-  
+
   if (!rawLink) {
     console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
     return 'demo' // fallback to demo
   }
-  
+
   // Parse and validate the link to handle both username and full URL formats
   const parsedLink = parseAndValidateCalLink(rawLink, 'demo')
-  
+
   // Log the transformation for debugging
   if (rawLink !== parsedLink) {
     console.log('[nuxt-calcom] Normalized Cal.com link:', { original: rawLink, parsed: parsedLink })
   }
-  
+
   return parsedLink
 })
 
@@ -90,14 +86,16 @@ const configString = computed(() => {
 
 onMounted(async () => {
   // Only register namespace on client-side where $calcom is available
-  if (process.client && $calcom) {
+  if (import.meta.client && $calcom) {
     try {
       // Register the namespace immediately - this ensures it's ready before any clicks
       await $calcom.registerNamespace(namespace.value, computedUiOptions.value)
-      
+
       // Verify the namespace is ready
       if ($calcom.isNamespaceReady(namespace.value)) {
-        console.log('[nuxt-calcom] Popup button ready - namespace properly initialized and ready for clicks')
+        console.log(
+          '[nuxt-calcom] Popup button ready - namespace properly initialized and ready for clicks'
+        )
       } else {
         console.warn('[nuxt-calcom] Namespace not ready yet:', namespace.value)
         // Wait a bit and check again
@@ -138,4 +136,4 @@ button:focus {
   outline: 2px solid #3b82f6;
   outline-offset: 2px;
 }
-</style> 
+</style>
