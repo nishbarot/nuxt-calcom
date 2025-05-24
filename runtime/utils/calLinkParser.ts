@@ -1,8 +1,5 @@
 /**
  * Parses and normalizes Cal.com links to extract the username/slug part
- * Handles both formats:
- * - Username only: "tanishq-barot-n3wisw" or "username/event-type"
- * - Full URLs: "https://cal.com/tanishq-barot-n3wisw" or "https://cal.com/username/event-type"
  * 
  * @param input - The Cal.com link input from user
  * @returns The normalized username/slug for Cal.com widgets
