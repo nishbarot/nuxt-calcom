@@ -31,7 +31,7 @@ jobs:
         run: pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
-        run: rm -f .eslintignore
+        run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Run unit tests
         run: pnpm test:unit
@@ -70,7 +70,7 @@ jobs:
         run: pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
-        run: rm -f .eslintignore
+        run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
@@ -144,7 +144,7 @@ jobs:
         run: pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
-        run: rm -f .eslintignore
+        run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Run linter
         run: pnpm lint
@@ -179,7 +179,7 @@ jobs:
         run: pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
-        run: rm -f .eslintignore
+        run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Build module
         run: pnpm build
@@ -215,7 +215,7 @@ jobs:
         run: pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
-        run: rm -f .eslintignore
+        run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Run unit tests
         run: pnpm test:unit

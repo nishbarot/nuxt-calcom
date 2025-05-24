@@ -168,6 +168,10 @@ _No critical issues at the moment._
 
 ### 05/25/2025
 
+- ✅ Fixed Windows compatibility issues in GitHub Actions by replacing `rm -f .eslintignore` with cross-platform Node.js command.
+- ✅ Resolved all 188 linting errors (missing trailing commas, formatting issues) by running `pnpm lint:fix`.
+- ✅ Removed `.eslintignore` file from workspace since patterns are now in `eslint.config.js`.
+- ✅ Updated all GitHub Actions workflows (test-suite.yml and test-simple.yml) to use cross-platform file deletion.
 - ✅ Fixed integration test build failures by updating package.json exports to use .d.mts instead of .d.ts and removing CommonJS support.
 - ✅ Created build.config.ts with failOnWarn: false to prevent @nuxt/module-builder warnings from failing the build.
 - ✅ Added unbuild as an explicit dev dependency to resolve TypeScript configuration issues.
