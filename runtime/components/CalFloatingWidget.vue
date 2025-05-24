@@ -198,32 +198,28 @@ onMounted(async () => {
       // Verify the namespace is ready
       if ($calcom.isNamespaceReady(namespace.value)) {
         console.log(
-          '[nuxt-calcom] Floating widget ready - namespace properly initialized and ready for clicks',
+          '[nuxt-calcom] Floating widget ready - namespace properly initialized and ready for clicks'
         )
-      }
-      else {
+      } else {
         console.warn('[nuxt-calcom] Floating widget namespace not ready yet:', namespace.value)
         // Wait a bit and check again
         setTimeout(() => {
           if ($calcom.isNamespaceReady(namespace.value)) {
             console.log('[nuxt-calcom] Floating widget ready (delayed) - namespace now ready')
-          }
-          else {
+          } else {
             console.error(
               '[nuxt-calcom] Floating widget namespace registration failed:',
-              namespace.value,
+              namespace.value
             )
           }
         }, 100)
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('[nuxt-calcom] Failed to register floating widget namespace:', error)
     }
-  }
-  else {
+  } else {
     console.log(
-      '[DEBUG] Skipping floating widget namespace registration - not on client or $calcom not available',
+      '[DEBUG] Skipping floating widget namespace registration - not on client or $calcom not available'
     )
   }
 })

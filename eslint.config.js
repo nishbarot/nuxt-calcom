@@ -4,12 +4,8 @@ export default createConfigForNuxt({
   features: {
     // Enable TypeScript support
     typescript: true,
-    // Enable stylistic rules for consistent formatting
-    stylistic: {
-      indent: 2,
-      quotes: 'single',
-      semi: false,
-    },
+    // Disable stylistic rules to avoid conflicts with Prettier
+    stylistic: false,
   },
   dirs: {
     src: ['./runtime', './src'],
@@ -70,5 +66,5 @@ export default createConfigForNuxt({
     rules: {
       'no-console': 'off',
     },
-  },
+  }
 )

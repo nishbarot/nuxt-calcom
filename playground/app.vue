@@ -13,7 +13,7 @@
           v-model.trim="userInputLink"
           type="text"
           placeholder="demo-user or https://cal.com/demo-user/30min"
-        >
+        />
         <div class="input-help">
           <p><strong>Supported formats:</strong></p>
           <ul>
@@ -30,17 +30,14 @@
       <div class="status-info">
         <p>
           <strong>Status:</strong>
-          <span :class="{ 'ok': isCalLoaded, 'not-ok': !isCalLoaded }">
+          <span :class="{ ok: isCalLoaded, 'not-ok': !isCalLoaded }">
             Cal.com Script {{ isCalLoaded ? 'Loaded' : 'Not Loaded' }}
           </span>
         </p>
         <p>
           <strong>Current Link for Widgets:</strong> <code>{{ effectiveCalLink }}</code>
         </p>
-        <p
-          v-if="userInputLink && userInputLink !== effectiveCalLink"
-          class="normalization-info"
-        >
+        <p v-if="userInputLink && userInputLink !== effectiveCalLink" class="normalization-info">
           <strong>Normalized from:</strong> <code>{{ userInputLink }}</code> →
           <code>{{ effectiveCalLink }}</code>
         </p>
@@ -54,10 +51,7 @@
         <p class="widget-description">
           Embeds the calendar directly in the page. Try pasting a full Cal.com URL above!
         </p>
-        <ClientOnly
-          fallback-tag="div"
-          fallback="Loading inline widget..."
-        >
+        <ClientOnly fallback-tag="div" fallback="Loading inline widget...">
           <CalInlineWidget
             :key="effectiveCalLink"
             :cal-link="effectiveCalLink"
@@ -70,13 +64,8 @@
       <!-- Popup Button -->
       <section class="widget-test-card">
         <h2>🎯 Popup Button</h2>
-        <p class="widget-description">
-          Opens the calendar in a modal popup when clicked.
-        </p>
-        <ClientOnly
-          fallback-tag="div"
-          fallback="Loading popup button..."
-        >
+        <p class="widget-description">Opens the calendar in a modal popup when clicked.</p>
+        <ClientOnly fallback-tag="div" fallback="Loading popup button...">
           <CalPopupButton
             :key="effectiveCalLink + '-popup'"
             :cal-link="effectiveCalLink"

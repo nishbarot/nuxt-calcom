@@ -77,7 +77,7 @@ describe('useCalcomEventListener', () => {
       const { startListening } = useCalcomEventListener(
         'bookingSuccessfulV2',
         callback,
-        'test-namespace',
+        'test-namespace'
       )
       await startListening()
 
@@ -96,11 +96,11 @@ describe('useCalcomEventListener', () => {
 
       const { startListening: startBooking } = useCalcomEventListener(
         'bookingSuccessfulV2',
-        bookingCallback,
+        bookingCallback
       )
       const { startListening: startSelection } = useCalcomEventListener(
         'eventTypeSelected',
-        selectionCallback,
+        selectionCallback
       )
 
       await startBooking()
@@ -122,7 +122,7 @@ describe('useCalcomEventListener', () => {
 
       const { startListening, isListening } = useCalcomEventListener(
         'bookingSuccessfulV2',
-        callback,
+        callback
       )
 
       expect(isListening()).toBe(false)
@@ -137,7 +137,7 @@ describe('useCalcomEventListener', () => {
 
       const { startListening, stopListening, isListening } = useCalcomEventListener(
         'bookingSuccessfulV2',
-        callback,
+        callback
       )
 
       await startListening()

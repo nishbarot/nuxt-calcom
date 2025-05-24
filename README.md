@@ -59,11 +59,11 @@ export default defineNuxtConfig({
 
   calcom: {
     // Your default Cal.com link (e.g., your-username/event-type)
-    defaultLink: 'demo' // Replace 'demo' with your actual Cal.com link
+    defaultLink: 'demo', // Replace 'demo' with your actual Cal.com link
 
     // Optional: Default theme for all widgets
     // theme: 'light', // 'light' | 'dark' | 'auto'
-  }
+  },
 })
 ```
 
@@ -131,7 +131,7 @@ export default defineNuxtConfig({
     // Global branding options
     branding: {
       brandColor: '#007BFF', // Your primary brand color
-      darkBrandColor: '#1A8CFF' // Brand color for dark mode
+      darkBrandColor: '#1A8CFF', // Brand color for dark mode
     },
 
     // Hide event type details globally
@@ -139,10 +139,10 @@ export default defineNuxtConfig({
 
     // Default UI options applied to all widgets
     uiOptions: {
-      layout: 'month_view' // 'month_view' | 'week_view' | 'column_view'
+      layout: 'month_view', // 'month_view' | 'week_view' | 'column_view'
       // styles: { /* Custom CSS properties for advanced styling */ }
-    }
-  }
+    },
+  },
 })
 ```
 
@@ -264,9 +264,9 @@ async function showSpecialOfferBooking() {
       hideEventTypeDetails: true,
       prefill: {
         name: 'Valued Customer',
-        email: 'customer@example.com'
-      }
-    }
+        email: 'customer@example.com',
+      },
+    },
   })
 }
 </script>

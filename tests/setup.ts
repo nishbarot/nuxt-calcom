@@ -40,7 +40,7 @@ Object.defineProperty(global.window, 'MutationObserver', {
 // Mock setTimeout and setInterval for testing
 vi.stubGlobal(
   'setTimeout',
-  vi.fn(fn => fn()),
+  vi.fn(fn => fn())
 )
 vi.stubGlobal('setInterval', vi.fn())
 vi.stubGlobal('clearInterval', vi.fn())

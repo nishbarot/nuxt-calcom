@@ -69,8 +69,7 @@ export const useCalcom = (): CalcomAPI => {
             calLink,
           })
         }
-      }
-      else {
+      } else {
         // Direct popup without namespace
         // First apply UI configuration if any
         if (Object.keys(mergedOptions).length > 0) {
@@ -85,8 +84,7 @@ export const useCalcom = (): CalcomAPI => {
       }
 
       console.log('[nuxt-calcom] Popup opened for:', calLink)
-    }
-    catch (error) {
+    } catch (error) {
       console.error('[nuxt-calcom] Failed to open popup:', error)
     }
   }
@@ -106,8 +104,7 @@ export const useCalcom = (): CalcomAPI => {
       // For non-namespaced or fallback, try to close any modal
       // Cal.com embeds are typically closed by user interaction
       console.log('[nuxt-calcom] Popup close requested')
-    }
-    catch (error) {
+    } catch (error) {
       console.error('[nuxt-calcom] Failed to close popup:', error)
     }
   }

@@ -219,7 +219,7 @@ test.describe('Cal.com Widgets Integration', () => {
     test('should not have console errors', async ({ page }) => {
       const errors: string[] = []
 
-      page.on('console', (msg) => {
+      page.on('console', msg => {
         if (msg.type() === 'error') {
           errors.push(msg.text())
         }
@@ -230,7 +230,7 @@ test.describe('Cal.com Widgets Integration', () => {
 
       // Filter out known acceptable errors (like network errors for blocked resources)
       const criticalErrors = errors.filter(
-        error => !error.includes('net::ERR_') && !error.includes('Failed to load resource'),
+        error => !error.includes('net::ERR_') && !error.includes('Failed to load resource')
       )
 
       expect(criticalErrors).toHaveLength(0)

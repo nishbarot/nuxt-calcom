@@ -147,7 +147,7 @@ describe('CalPopupButton', () => {
 
       expect(button1.attributes('id')).not.toBe(button2.attributes('id'))
       expect(button1.attributes('data-cal-namespace')).not.toBe(
-        button2.attributes('data-cal-namespace'),
+        button2.attributes('data-cal-namespace')
       )
     })
   })

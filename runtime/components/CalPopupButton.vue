@@ -12,11 +12,7 @@
       <slot>{{ text }}</slot>
     </button>
     <template #fallback>
-      <button
-        :class="buttonClass"
-        :style="buttonStyle"
-        disabled
-      >
+      <button :class="buttonClass" :style="buttonStyle" disabled>
         <slot>{{ text }}</slot>
       </button>
     </template>
@@ -98,27 +94,23 @@ onMounted(async () => {
       // Verify the namespace is ready
       if ($calcom.isNamespaceReady(namespace.value)) {
         console.log(
-          '[nuxt-calcom] Popup button ready - namespace properly initialized and ready for clicks',
+          '[nuxt-calcom] Popup button ready - namespace properly initialized and ready for clicks'
         )
-      }
-      else {
+      } else {
         console.warn('[nuxt-calcom] Namespace not ready yet:', namespace.value)
         // Wait a bit and check again
         setTimeout(() => {
           if ($calcom.isNamespaceReady(namespace.value)) {
             console.log('[nuxt-calcom] Popup button ready (delayed) - namespace now ready')
-          }
-          else {
+          } else {
             console.error('[nuxt-calcom] Namespace registration failed:', namespace.value)
           }
         }, 100)
       }
-    }
-    catch (error) {
+    } catch (error) {
       console.error('[nuxt-calcom] Failed to register namespace:', error)
     }
-  }
-  else {
+  } else {
     console.log('[DEBUG] Skipping namespace registration - not on client or $calcom not available')
   }
 })

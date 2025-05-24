@@ -54,7 +54,7 @@ describe('useCalcom', () => {
           branding: { brandColor: '#007BFF' },
           hideEventTypeDetails: false,
           layout: 'month_view',
-        }),
+        })
       )
 
       expect(mockCal).toHaveBeenCalledWith('preload', { calLink: 'demo' })
@@ -76,7 +76,7 @@ describe('useCalcom', () => {
           branding: { brandColor: '#007BFF' },
           hideEventTypeDetails: false,
           layout: 'month_view',
-        }),
+        })
       )
 
       expect(mockCal).toHaveBeenCalledWith('preload', { calLink: 'custom/meeting' })
@@ -101,7 +101,7 @@ describe('useCalcom', () => {
         'ui',
         expect.objectContaining({
           theme: 'dark',
-        }),
+        })
       )
       expect(namespaceMock).toHaveBeenCalledWith('popup', { calLink: 'test/meeting' })
     })

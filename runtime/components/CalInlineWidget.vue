@@ -1,18 +1,10 @@
 <template>
   <ClientOnly>
     <div>
-      <div
-        :id="containerId"
-        ref="containerRef"
-        class="cal-inline-widget"
-        :style="containerStyle"
-      />
+      <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
     </div>
     <template #fallback>
-      <div
-        class="cal-loading-placeholder"
-        :style="containerStyle"
-      >
+      <div class="cal-loading-placeholder" :style="containerStyle">
         <div class="loading-content">
           <div class="loading-spinner" />
           <p>Loading Cal.com calendar...</p>
@@ -131,8 +123,7 @@ const initializeEmbed = async () => {
         console.log(`[DEBUG] Retry attempt ${retryCount}/5 in 200ms...`)
         setTimeout(() => initializeEmbed(), 200)
         return
-      }
-      else {
+      } else {
         console.error('[DEBUG] Max retries reached. Element not found.')
         return
       }
@@ -169,13 +160,11 @@ const initializeEmbed = async () => {
     embedInitialized = true
     retryCount = 0 // Reset retry count on success
     console.log('[nuxt-calcom] Inline widget initialized successfully for:', calLink.value)
-  }
-  catch (error) {
+  } catch (error) {
     console.error('[nuxt-calcom] Failed to initialize inline widget:', error)
     if (error instanceof Error) {
       console.error('[DEBUG] Error details:', error.message, error.stack)
-    }
-    else {
+    } else {
       console.error('[DEBUG] Error details:', String(error))
     }
   }
