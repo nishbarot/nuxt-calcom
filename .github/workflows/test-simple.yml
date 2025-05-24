@@ -1,0 +1,45 @@
+name: Simple Test (Validation)
+
+on:
+  workflow_dispatch: # Manual trigger for testing
+
+jobs:
+  validate-setup:
+    name: Validate PNPM Setup
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: '10'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Verify pnpm installation
+        run: |
+          echo "PNPM version:"
+          pnpm --version
+          echo "Node version:"
+          node --version
+          echo "NPM version:"
+          npm --version
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Verify project setup
+        run: |
+          echo "Dependencies installed successfully"
+          echo "Checking if we can run basic commands:"
+          pnpm list --depth=0
+
+      - name: Run unit tests only
+        run: pnpm test:unit
