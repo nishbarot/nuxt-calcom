@@ -1,25 +1,41 @@
-# 🗓️ Nuxt Cal.com Module
-
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![License][license-src]][license-href]
-[![Nuxt][nuxt-src]][nuxt-href]
+<div align="center">
+  <img src="https://raw.githubusercontent.com/your-username/nuxt-calcom/main/.github/assets/logo.png" alt="Nuxt Cal.com Module Logo" width="150">
+  <h1>🗓️ Nuxt Cal.com Module</h1>
+  <p>
+    <strong>The most powerful and flexible Cal.com integration for Nuxt 3.</strong>
+  </p>
+  <p>
+    <a href="https://npmjs.com/package/nuxt-calcom"><img src="https://img.shields.io/npm/v/nuxt-calcom/latest.svg?style=flat-square&colorA=18181B&colorB=28CF8D" alt="npm version"></a>
+    <a href="https://npmjs.com/package/nuxt-calcom"><img src="https://img.shields.io/npm/dm/nuxt-calcom.svg?style=flat-square&colorA=18181B&colorB=28CF8D" alt="npm downloads"></a>
+    <a href="https://npmjs.com/package/nuxt-calcom"><img src="https://img.shields.io/npm/l/nuxt-calcom.svg?style=flat-square&colorA=18181B&colorB=28CF8D" alt="License"></a>
+    <a href="https://nuxt.com"><img src="https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js&style=flat-square" alt="Nuxt"></a>
+  </p>
+  <br>
+</div>
 
 A powerful Nuxt 3 module for integrating [Cal.com](https://cal.com) scheduling widgets into your application with ease.
+
+---
 
 ## ✨ Features
 
 - 🎯 **Multiple Embed Types**: Inline widgets, popup buttons, and floating widgets
 - 🔧 **Zero Configuration**: Works out of the box with sensible defaults
-- 🎨 **Customizable**: Full control over styling and behavior
-- 📱 **Responsive**: Mobile-friendly components
-- 🚀 **Auto-imported Components**: No manual imports needed
-- 🎪 **Event Listeners**: React to booking events with Vue composables
-- 🔀 **SPA Ready**: Handles navigation and cleanup automatically
-- 💡 **TypeScript**: Full type safety and intellisense
-- 🎯 **Programmatic API**: Control Cal.com widgets via composables
+- 🎨 **Highly Customizable**: Full control over styling and behavior via props, slots, and global config
+- 📱 **Responsive Design**: Mobile-friendly components adapt to any screen size
+- 🚀 **Auto-Imported Components**: Seamless integration, no manual imports needed
+- 🎪 **Reactive Event Listeners**: Easily react to booking events with Vue composables
+- 🔀 **SPA Ready**: Handles navigation and cleanup automatically in Single Page Applications
+- 💡 **TypeScript Support**: Full type safety and autocompletion for a better developer experience
+- 🛠️ **Programmatic API**: Control Cal.com widgets dynamically using composables
 
-## 📦 Installation
+---
+
+## 🚀 Quick Start
+
+Get up and running with the Nuxt Cal.com module in minutes.
+
+### 1. Installation
 
 ```bash
 # Using npm
@@ -32,371 +48,402 @@ yarn add nuxt-calcom
 pnpm add nuxt-calcom
 ```
 
-Add `nuxt-calcom` to your `nuxt.config.ts`:
+### 2. Module Configuration
 
-```ts
-export default defineNuxtConfig({
-  modules: ['nuxt-calcom'],
-  calcom: {
-    defaultLink: 'your-username/meeting-type',
-    theme: 'light'
-  }
-})
-```
+Add `nuxt-calcom` to your `nuxt.config.ts` and provide your default Cal.com link:
 
-## 🚀 Quick Start
-
-### Basic Inline Widget
-
-```vue
-<template>
-  <CalInlineWidget cal-link="john/30min" />
-</template>
-```
-
-### Popup Button
-
-```vue
-<template>
-  <CalPopupButton 
-    cal-link="john/consultation" 
-    text="Book a Meeting"
-  />
-</template>
-```
-
-### Floating Widget
-
-```vue
-<template>
-  <CalFloatingWidget 
-    cal-link="john/quick-call"
-    position="bottom-right"
-    text="💬 Schedule"
-  />
-</template>
-```
-
-## ⚙️ Configuration
-
-Configure default options in your `nuxt.config.ts`:
-
-```ts
-export default defineNuxtConfig({
-  modules: ['nuxt-calcom'],
-  calcom: {
-    // Default Cal.com link (required)
-    defaultLink: 'your-username/meeting-type',
-    
-    // Default embed type
-    defaultEmbed: 'inline', // 'inline' | 'popup' | 'floating'
-    
-    // Theme
-    theme: 'light', // 'light' | 'dark' | 'auto'
-    
-    // Branding
-    branding: {
-      brandColor: '#000000',
-      darkBrandColor: '#ffffff'
-    },
-    
-    // Hide event type details
-    hideEventTypeDetails: false,
-    
-    // UI options
-    uiOptions: {
-      layout: 'month_view', // 'month_view' | 'week_view' | 'column_view'
-      styles: {
-        // Custom CSS properties
-      }
-    }
-  }
-})
-```
-
-## 🧩 Components
-
-### `<CalInlineWidget>`
-
-Embeds a calendar directly in your page.
-
-```vue
-<CalInlineWidget 
-  cal-link="john/meeting"
-  :height="600"
-  :width="'100%'"
-  :ui-options="{ theme: 'dark' }"
-  :style="{ borderRadius: '12px' }"
-/>
-```
-
-**Props:**
-- `calLink?: string` - Cal.com link (falls back to defaultLink)
-- `height?: string | number` - Widget height (default: '630px')
-- `width?: string | number` - Widget width (default: '100%')
-- `uiOptions?: object` - Cal.com UI customization options
-- `style?: object` - Custom CSS styles
-
-### `<CalPopupButton>`
-
-A button that opens Cal.com in a modal popup.
-
-```vue
-<CalPopupButton 
-  cal-link="jane/consultation"
-  text="Schedule Consultation"
-  button-class="custom-btn"
-  :ui-options="{ hideEventTypeDetails: true }"
-/>
-```
-
-**Props:**
-- `calLink?: string` - Cal.com link
-- `text?: string` - Button text (default: 'Schedule Meeting')
-- `buttonClass?: string` - CSS class for styling
-- `buttonStyle?: object` - Inline styles for button
-- `uiOptions?: object` - Cal.com UI options
-
-### `<CalFloatingWidget>`
-
-A floating button positioned on the page.
-
-```vue
-<CalFloatingWidget 
-  cal-link="team/demo"
-  text="📅 Book Demo"
-  position="bottom-left"
-  :offset="{ x: 20, y: 20 }"
-  :is-visible="showWidget"
-/>
-```
-
-**Props:**
-- `calLink?: string` - Cal.com link
-- `text?: string` - Button text (default: '📅 Schedule')
-- `position?: string` - Position: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'
-- `offset?: object` - Positioning offset `{ x: number, y: number }`
-- `isVisible?: boolean` - Show/hide widget
-- `buttonClass?: string` - CSS class for styling
-- `buttonStyle?: object` - Inline styles
-
-## 🎪 Composables
-
-### `useCalcom()`
-
-Programmatically control Cal.com widgets.
-
-```vue
-<script setup>
-const { openPopup, closePopup, isLoaded, waitForCal } = useCalcom()
-
-const handleCustomBooking = async () => {
-  await openPopup({
-    calLink: 'john/special-meeting',
-    uiOptions: {
-      theme: 'dark',
-      hideEventTypeDetails: true
-    }
-  })
-}
-</script>
-```
-
-**Methods:**
-- `openPopup(options)` - Open a popup programmatically
-- `closePopup(namespace?)` - Close popup
-- `isLoaded()` - Check if Cal.com script is loaded
-- `waitForCal()` - Promise that resolves when Cal.com is ready
-
-### Event Listeners
-
-Listen to Cal.com events with reactive composables:
-
-```vue
-<script setup>
-import { 
-  useCalcomBookingSuccess,
-  useCalcomEventTypeSelected,
-  useCalcomEmbedReady
-} from 'nuxt-calcom'
-
-// Listen for successful bookings
-useCalcomBookingSuccess((event) => {
-  console.log('Booking confirmed!', event.data)
-  // Redirect, show toast, etc.
-})
-
-// Listen for event type selection
-useCalcomEventTypeSelected((event) => {
-  console.log('User selected:', event.data.eventType)
-})
-
-// Listen for embed ready
-useCalcomEmbedReady((event) => {
-  console.log('Calendar is ready!')
-})
-</script>
-```
-
-**Available Events:**
-- `useCalcomBookingSuccess` - Booking completed
-- `useCalcomEventTypeSelected` - User selected an event type
-- `useCalcomEventTypeViewed` - User viewed an event type
-- `useCalcomEmbedReady` - Embed finished loading
-
-## 🎨 Styling
-
-### Component Styling
-
-Style components using CSS classes:
-
-```vue
-<template>
-  <CalPopupButton 
-    cal-link="john/meeting"
-    button-class="my-custom-button"
-  />
-</template>
-
-<style>
-.my-custom-button {
-  background: linear-gradient(45deg, #667eea, #764ba2);
-  border: none;
-  padding: 1rem 2rem;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-}
-</style>
-```
-
-### Global Styling
-
-Customize via Cal.com's UI options:
-
-```ts
+```typescript
 // nuxt.config.ts
 export default defineNuxtConfig({
+  modules: ['nuxt-calcom'],
+
   calcom: {
-    uiOptions: {
-      styles: {
-        branding: {
-          brandColor: "#000000"
-        }
-      },
-      hideEventTypeDetails: false
-    }
+    // Your default Cal.com link (e.g., your-username/event-type)
+    defaultLink: 'demo', // Replace 'demo' with your actual Cal.com link
+
+    // Optional: Default theme for all widgets
+    // theme: 'light', // 'light' | 'dark' | 'auto'
   }
 })
 ```
 
-## 🛠️ Development
+### 3. Usage Examples
 
-```bash
-# Install dependencies
-pnpm install
+Embed Cal.com widgets anywhere in your Nuxt application:
 
-# Develop with the playground
-pnpm dev
-
-# Build the module
-pnpm build
-
-# Run ESLint
-pnpm lint
-
-# Run tests
-pnpm test
-```
-
-## 📝 Examples
-
-### Full Example with Events
-
+**Inline Widget:**
 ```vue
 <template>
   <div>
-    <!-- Inline booking -->
-    <CalInlineWidget 
-      cal-link="support/help"
-      :height="500"
-    />
-    
-    <!-- Custom popup button -->
-    <CalPopupButton 
-      cal-link="sales/demo"
-      text="📞 Book Sales Call"
-      @click="trackBookingAttempt"
-    />
-    
-    <!-- Floating widget -->
-    <CalFloatingWidget 
-      cal-link="support/urgent"
-      text="🆘 Urgent Help"
-      position="bottom-right"
-    />
+    <h2>Book a Meeting</h2>
+    <CalInlineWidget cal-link="your-username/30min" />
   </div>
 </template>
+```
 
-<script setup>
-const { openPopup } = useCalcom()
+**Popup Button:**
+```vue
+<template>
+  <CalPopupButton
+    cal-link="your-username/consultation"
+    text="📅 Schedule Consultation"
+    button-class="my-custom-button-class"
+  />
+</template>
+```
 
-// Track booking attempts
-const trackBookingAttempt = () => {
-  console.log('User clicked booking button')
-}
+**Floating Widget:**
+```vue
+<template>
+  <!-- This will float over your page content -->
+  <CalFloatingWidget
+    cal-link="your-username/quick-call"
+    position="bottom-right"
+    text="💬 Quick Chat"
+  />
+</template>
+```
 
-// Listen for successful bookings
-useCalcomBookingSuccess((event) => {
-  // Send analytics event
-  gtag('event', 'booking_completed', {
-    event_category: 'engagement',
-    event_label: event.data?.eventType
-  })
-  
-  // Redirect to confirmation page
-  await navigateTo('/booking-confirmed')
+---
+
+## ⚙️ Global Configuration
+
+Customize the default behavior of the module in your `nuxt.config.ts`:
+
+```typescript
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['nuxt-calcom'],
+
+  calcom: {
+    // REQUIRED: Default Cal.com link (e.g., your-username/meeting-type)
+    defaultLink: 'your-username/event-type',
+
+    // Default embed type if using a generic <CalWidget> (not yet implemented)
+    // defaultEmbed: 'inline', // 'inline' | 'popup' | 'floating'
+
+    // Global theme for all widgets
+    theme: 'light', // 'light' | 'dark' | 'auto'
+
+    // Global branding options
+    branding: {
+      brandColor: '#007BFF',      // Your primary brand color
+      darkBrandColor: '#1A8CFF' // Brand color for dark mode
+    },
+
+    // Hide event type details globally
+    hideEventTypeDetails: false,
+
+    // Default UI options applied to all widgets
+    uiOptions: {
+      layout: 'month_view', // 'month_view' | 'week_view' | 'column_view'
+      // styles: { /* Custom CSS properties for advanced styling */ }
+    }
+  }
 })
+```
+> **Note:** Providing `defaultLink` in the configuration is highly recommended. Components will fall back to this link if no `cal-link` prop is provided.
 
-// Custom popup with dynamic data
-const openDynamicBooking = () => {
+---
+
+## 🧩 Components
+
+The module provides auto-imported components for easy integration.
+
+### `<CalInlineWidget>`
+
+Embeds a Cal.com calendar directly into your page content.
+
+```vue
+<template>
+  <section>
+    <h3>Our Calendar</h3>
+    <CalInlineWidget
+      cal-link="team/product-demo"
+      :height="700"
+      :ui-options="{ theme: 'dark', layout: 'week_view' }"
+      :style="{ border: '1px solid #eee', borderRadius: '12px' }"
+    />
+  </section>
+</template>
+```
+
+**Key Props:**
+- `calLink?: string`: Your Cal.com link (e.g., `username/event`). Falls back to `defaultLink` from module config.
+- `height?: string | number`: Height of the widget (default: `630px`).
+- `width?: string | number`: Width of the widget (default: `100%`).
+- `uiOptions?: object`: Cal.com UI customization options (theme, layout, etc.).
+- `style?: object`: Custom CSS styles to apply to the widget's container.
+
+### `<CalPopupButton>`
+
+Renders a button that, when clicked, opens the Cal.com scheduling interface in a modal popup.
+
+```vue
+<template>
+  <CalPopupButton
+    cal-link="sales/discovery-call"
+    text="🚀 Book a Discovery Call"
+    button-class="action-button primary-button"
+    :ui-options="{ hideEventTypeDetails: true, theme: 'auto' }"
+  >
+    <!-- Optional: Custom content via slot -->
+    <!-- <img src="/icons/calendar.svg" alt="" /> Schedule Now -->
+  </CalPopupButton>
+</template>
+```
+
+**Key Props:**
+- `calLink?: string`: Your Cal.com link.
+- `text?: string`: Text displayed on the button (default: `Schedule Meeting`). Can be overridden by slot.
+- `buttonClass?: string`: Custom CSS class(es) for the button.
+- `buttonStyle?: object`: Inline CSS styles for the button.
+- `uiOptions?: object`: Cal.com UI options for the popup.
+
+### `<CalFloatingWidget>`
+
+Displays a floating button that remains visible on the page, opening a popup when clicked.
+
+```vue
+<template>
+  <CalFloatingWidget
+    cal-link="support/tech-issue"
+    text="🆘 Get Support"
+    position="bottom-left"
+    :offset="{ x: 30, y: 30 }"
+    :is-visible="true"
+    variant="outline"
+    size="large"
+    animation="bounce"
+  />
+</template>
+```
+
+**Key Props:**
+- `calLink?: string`: Your Cal.com link.
+- `text?: string`: Text for the button (default: `📅 Schedule`). Can be overridden by slot.
+- `position?: 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right'`: Position on the screen.
+- `offset?: { x?: number, y?: number }`: Offset from the screen edges.
+- `isVisible?: boolean`: Controls the visibility of the widget.
+- `buttonClass?: string`: Custom CSS class(es).
+- `buttonStyle?: object`: Inline CSS styles.
+- `uiOptions?: object`: Cal.com UI options.
+- `size?: 'small' | 'medium' | 'large'`: Predefined button sizes.
+- `variant?: 'solid' | 'outline' | 'ghost'`: Predefined button styles.
+- `rounded?: boolean`: If true, applies fully rounded corners.
+- `shadow?: 'none' | 'small' | 'medium' | 'large'`: Shadow intensity.
+- `animation?: 'slide' | 'fade' | 'bounce' | 'none'`: Entrance animation.
+
+---
+
+## 🛠️ Composables
+
+Interact with and listen to Cal.com events programmatically.
+
+### `useCalcom()`
+
+Provides methods to control Cal.com widgets.
+
+```vue
+<script setup lang="ts">
+const { openPopup, closePopup, isLoaded, waitForCal } = useCalcom()
+
+async function showSpecialOfferBooking() {
+  await waitForCal(); // Ensure Cal.com script is loaded
   openPopup({
-    calLink: `team/${route.params.teamSlug}`,
+    calLink: 'marketing/special-offer',
     uiOptions: {
       theme: 'dark',
+      hideEventTypeDetails: true,
       prefill: {
-        name: user.value?.name,
-        email: user.value?.email
+        name: 'Valued Customer',
+        email: 'customer@example.com'
       }
     }
-  })
+  });
 }
+</script>
+
+<template>
+  <button @click="showSpecialOfferBooking">Book Special Offer</button>
+</template>
+```
+
+**Key Methods:**
+- `openPopup(options)`: Opens a Cal.com scheduling popup. `options` can include `calLink` and `uiOptions`.
+- `closePopup(namespace?)`: Closes an active popup. Optionally specify a namespace.
+- `isLoaded()`: Returns `true` if the Cal.com embed script is loaded.
+- `waitForCal()`: Returns a Promise that resolves when the Cal.com script is loaded and `window.Cal` is available.
+
+### Event Listeners with `useCalcomEventListener()`
+
+React to events triggered by the Cal.com widgets.
+
+```vue
+<script setup lang="ts">
+import { useCalcomEventListener } from 'nuxt-calcom'; // Or auto-imported
+
+// On successful booking
+useCalcomEventListener('bookingSuccessful', (event) => {
+  console.log('Booking Confirmed:', event.data);
+  // Example: Redirect to a thank you page or show a notification
+  // navigateTo('/booking-confirmed');
+});
+
+// When an event type is selected by the user
+useCalcomEventListener('eventTypeSelected', (event) => {
+  console.log('Event Type Selected:', event.data.eventType);
+});
+
+// When the Cal.com embed is fully ready
+useCalcomEventListener('embedReady', (event) => {
+  console.log('Cal.com Embed is Ready:', event.data);
+});
 </script>
 ```
 
-## 🤝 Contributing
+**Available Events (via `useCalcomEventListener(eventName, callback)`):**
+- `bookingSuccessful`: Triggered after a booking is successfully completed.
+- `eventTypeSelected`: When a user selects an event type from a list.
+- `dateSelected`: When a user selects a date.
+- `timeSelected`: When a user selects a time slot.
+- `embedReady`: When the Cal.com embed iframe has loaded its content.
+  *(This is a selection, refer to Cal.com embed documentation for a full list of actions.)*
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+---
+
+## 🎨 Styling & Customization
+
+Tailor the appearance of your Cal.com widgets.
+
+### 1. Component Props
+
+Most visual aspects can be controlled via component props:
+- `buttonClass`, `buttonStyle` for buttons.
+- `size`, `variant`, `rounded`, `shadow` for `CalFloatingWidget`.
+- `uiOptions` on all components to pass Cal.com native styling (theme, brandColor, etc.).
+
+```vue
+<CalPopupButton
+  button-class="my-primary-button large-text"
+  :button-style="{ backgroundColor: '#FF5733', padding: '15px 30px' }"
+  :ui-options="{ theme: 'dark', styles: { branding: { brandColor: '#FF5733' } } }"
+/>
+```
+
+### 2. Slots for Custom Content
+
+Use slots to inject custom HTML content into buttons.
+
+**`CalPopupButton` Slot:**
+```vue
+<CalPopupButton cal-link="demo/30min">
+  <template #default>
+    <svg class="icon-calendar" width="20" height="20" viewBox="0 0 24 24">...</svg>
+    <span>Book My Custom Meeting</span>
+  </template>
+</CalPopupButton>
+```
+
+**`CalFloatingWidget` Slot:**
+```vue
+<CalFloatingWidget cal-link="demo/chat">
+  <template #default>
+    <svg class="icon-chat" width="24" height="24" viewBox="0 0 24 24">...</svg>
+    <span>Chat Now</span>
+  </template>
+</CalFloatingWidget>
+```
+
+### 3. Global Styling in `nuxt.config.ts`
+
+Define global UI defaults like `theme` and `branding.brandColor` in your `calcom` module configuration.
+
+```typescript
+// nuxt.config.ts
+calcom: {
+  defaultLink: 'demo',
+  theme: 'dark',
+  branding: {
+    brandColor: '#7F00FF' // Purple brand color
+  },
+  uiOptions: {
+    styles: { /* Advanced global CSS overrides for Cal.com internals */ }
+  }
+}
+```
+
+### 4. CSS Custom Properties (Advanced)
+
+For fine-grained control, you might be able to override some Cal.com internal styles if they use CSS custom properties, or by targeting specific classes (use with caution as Cal.com internal classes may change).
+
+```css
+/* Example: In your global CSS file */
+:root {
+  /* If Cal.com widgets were to use these (hypothetical) */
+  /* --cal-embed-primary-color: #your-brand-color; */
+  /* --cal-embed-border-radius: 10px; */
+}
+
+/* Targeting specific generated elements (inspect element to find classes) */
+/* This is less robust and not generally recommended for external widgets */
+/* .cal-embed-container iframe { border: 2px solid hotpink !important; } */
+```
+> **Recommendation**: Prefer using `uiOptions` and component props for styling, as directly targeting internal Cal.com classes can be brittle.
+
+---
+
+## 🛠️ Development Setup
+
+If you want to contribute or work on this module locally:
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/your-username/nuxt-calcom.git
+cd nuxt-calcom
+
+# 2. Install dependencies
+pnpm install
+
+# 3. Run the playground environment
+pnpm dev
+
+# This starts the Nuxt playground app where you can test components.
+```
+
+**Available Scripts:**
+- `pnpm dev`: Starts the development playground.
+- `pnpm build`: Builds the module for production.
+- `pnpm lint`: Lints the codebase.
+- `pnpm test`: Runs tests (if configured).
+
+---
 
 ## 📄 License
 
 [MIT License](./LICENSE)
 
-## 🔗 Links
+---
 
-- [Cal.com](https://cal.com) - The open-source Calendly alternative
-- [Documentation](https://docs.cal.com/embed)
-- [Nuxt Modules](https://modules.nuxt.com)
+## 🔗 Useful Links
 
-<!-- Badges -->
-[npm-version-src]: https://img.shields.io/npm/v/nuxt-calcom/latest.svg?style=flat&colorA=18181B&colorB=28CF8D
+- **[Cal.com Official Website](https://cal.com)**
+- **[Cal.com Embed Documentation](https://cal.com/docs/embeds/introduction)**
+- **[Nuxt Modules](https://nuxt.com/modules)**
+- **[Report an Issue](https://github.com/your-username/nuxt-calcom/issues)**
+- **[Contribute](https://github.com/your-username/nuxt-calcom/pulls)**
+
+<!-- Badges section - these should be at the top but repeated here for structure -->
+<!--
+[npm-version-src]: https://img.shields.io/npm/v/nuxt-calcom/latest.svg?style=flat-square&colorA=18181B&colorB=28CF8D
 [npm-version-href]: https://npmjs.com/package/nuxt-calcom
 
-[npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-calcom.svg?style=flat&colorA=18181B&colorB=28CF8D
+[npm-downloads-src]: https://img.shields.io/npm/dm/nuxt-calcom.svg?style=flat-square&colorA=18181B&colorB=28CF8D
 [npm-downloads-href]: https://npmjs.com/package/nuxt-calcom
 
-[license-src]: https://img.shields.io/npm/l/nuxt-calcom.svg?style=flat&colorA=18181B&colorB=28CF8D
+[license-src]: https://img.shields.io/npm/l/nuxt-calcom.svg?style=flat-square&colorA=18181B&colorB=28CF8D
 [license-href]: https://npmjs.com/package/nuxt-calcom
 
-[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js
+[nuxt-src]: https://img.shields.io/badge/Nuxt-18181B?logo=nuxt.js&style=flat-square
 [nuxt-href]: https://nuxt.com
+-->

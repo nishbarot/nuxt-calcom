@@ -26,6 +26,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { useRuntimeConfig, useNuxtApp } from '#app'
+import { parseAndValidateCalLink } from '../utils/calLinkParser'
 
 interface Props {
   calLink?: string
@@ -48,15 +49,25 @@ const buttonRef = ref<HTMLElement>()
 const buttonId = ref(`cal-popup-btn-${Math.random().toString(36).substr(2, 9)}`)
 const namespace = ref(`popup-${Math.random().toString(36).substr(2, 9)}`)
 
-// Compute the cal link to use (prop takes precedence over config)
+// Compute the cal link to use (prop takes precedence over config) with URL parsing
 const calLink = computed(() => {
   const calcomConfig = config.public.calcom as any
-  const link = props.calLink || calcomConfig?.defaultLink
-  if (!link) {
+  const rawLink = props.calLink || calcomConfig?.defaultLink
+  
+  if (!rawLink) {
     console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
     return 'demo' // fallback to demo
   }
-  return link
+  
+  // Parse and validate the link to handle both username and full URL formats
+  const parsedLink = parseAndValidateCalLink(rawLink, 'demo')
+  
+  // Log the transformation for debugging
+  if (rawLink !== parsedLink) {
+    console.log('[nuxt-calcom] Normalized Cal.com link:', { original: rawLink, parsed: parsedLink })
+  }
+  
+  return parsedLink
 })
 
 // Compute UI options with defaults from config

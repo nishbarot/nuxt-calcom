@@ -1,4 +1,5 @@
 import { useNuxtApp, useRuntimeConfig } from '#app'
+import { parseAndValidateCalLink } from '../utils/calLinkParser'
 
 export interface CalcomOptions {
   calLink?: string
@@ -8,9 +9,9 @@ export interface CalcomOptions {
 
 export interface CalcomAPI {
   openPopup: (options?: CalcomOptions) => Promise<void>
-  closePopup: (namespace?: string) => Promise<void>
+  closePopup: (namespace?: string) => void
   isLoaded: () => boolean
-  waitForCal: () => Promise<any>
+  waitForCal: () => Promise<void>
 }
 
 export const useCalcom = (): CalcomAPI => {
@@ -32,10 +33,18 @@ export const useCalcom = (): CalcomAPI => {
       await $calcom.waitForCal()
       
       const calcomConfig = config.public.calcom as any
-      const calLink = options.calLink || calcomConfig?.defaultLink
-      if (!calLink) {
+      const rawCalLink = options.calLink || calcomConfig?.defaultLink
+      if (!rawCalLink) {
         console.warn('[nuxt-calcom] No calLink provided for popup')
         return
+      }
+
+      // Parse and validate the Cal.com link to handle both formats
+      const calLink = parseAndValidateCalLink(rawCalLink, 'demo')
+      
+      // Log the transformation for debugging
+      if (rawCalLink !== calLink) {
+        console.log('[nuxt-calcom] Normalized Cal.com link for popup:', { original: rawCalLink, parsed: calLink })
       }
 
       const mergedOptions = {
@@ -101,7 +110,7 @@ export const useCalcom = (): CalcomAPI => {
     return typeof window !== 'undefined' && !!window.Cal && !!window.Cal.loaded
   }
 
-  const waitForCal = async (): Promise<any> => {
+  const waitForCal = async (): Promise<void> => {
     return $calcom.waitForCal()
   }
 
