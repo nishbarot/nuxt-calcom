@@ -57,30 +57,38 @@ export const useCalcom = (): CalcomAPI => {
 
       if (options.namespace) {
         // Use namespace if provided
-        window.Cal('init', options.namespace, {
-          origin: 'https://cal.com',
-        })
-
-        if (window.Cal.ns && window.Cal.ns[options.namespace]) {
-          if (Object.keys(mergedOptions).length > 0) {
-            window.Cal.ns[options.namespace]('ui', mergedOptions)
-          }
-          window.Cal.ns[options.namespace]('popup', {
-            calLink,
+        if (window.Cal && typeof window.Cal === 'function') {
+          window.Cal('init', options.namespace, {
+            origin: 'https://cal.com',
           })
+        }
+
+        if (window.Cal && window.Cal.ns && window.Cal.ns[options.namespace]) {
+          if (Object.keys(mergedOptions).length > 0) {
+            if (typeof window.Cal.ns[options.namespace] === 'function') {
+              window.Cal.ns[options.namespace]('ui', mergedOptions)
+            }
+          }
+          if (typeof window.Cal.ns[options.namespace] === 'function') {
+            window.Cal.ns[options.namespace]('popup', {
+              calLink,
+            })
+          }
         }
       } else {
         // Direct popup without namespace
         // First apply UI configuration if any
-        if (Object.keys(mergedOptions).length > 0) {
-          window.Cal('ui', mergedOptions)
+        if (window.Cal && typeof window.Cal === 'function') {
+          if (Object.keys(mergedOptions).length > 0) {
+            window.Cal('ui', mergedOptions)
+          }
+
+          // Preload the calendar for instant opening
+          window.Cal('preload', { calLink })
+
+          // Open popup
+          window.Cal('popup', { calLink })
         }
-
-        // Preload the calendar for instant opening
-        window.Cal('preload', { calLink })
-
-        // Open popup
-        window.Cal('popup', { calLink })
       }
 
       console.log('[nuxt-calcom] Popup opened for:', calLink)
@@ -93,7 +101,7 @@ export const useCalcom = (): CalcomAPI => {
     try {
       await $calcom.waitForCal()
 
-      if (namespace && window.Cal.ns && window.Cal.ns[namespace]) {
+      if (namespace && window.Cal && window.Cal.ns && window.Cal.ns[namespace]) {
         // Close specific namespace popup if available
         if (typeof window.Cal.ns[namespace] === 'function') {
           // Cal.com doesn't have a standard close method, so we try common approaches
@@ -110,7 +118,12 @@ export const useCalcom = (): CalcomAPI => {
   }
 
   const isLoaded = (): boolean => {
-    return typeof window !== 'undefined' && !!window.Cal && !!window.Cal.loaded
+    return (
+      typeof window !== 'undefined' &&
+      !!window.Cal &&
+      typeof window.Cal.loaded === 'boolean' &&
+      !!window.Cal.loaded
+    )
   }
 
   const waitForCal = async (): Promise<void> => {

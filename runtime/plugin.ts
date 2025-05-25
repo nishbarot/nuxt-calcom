@@ -1,13 +1,21 @@
-import { defineNuxtPlugin } from '#app'
+import { defineNuxtPlugin } from 'nuxt/app'
+
+interface CalFunction {
+  (action: string, ...args: unknown[]): void
+  loaded?: boolean
+  ns?: Record<string, CalFunction>
+  q?: unknown[]
+  l?: (args: unknown[]) => void
+}
 
 declare global {
   interface Window {
-    Cal?: any
+    Cal?: CalFunction
   }
 }
 
 // Store for pending namespace registrations
-const pendingNamespaces = new Map<string, Record<string, any>>()
+const pendingNamespaces = new Map<string, Record<string, unknown>>()
 const initializedNamespaces = new Set<string>()
 
 export default defineNuxtPlugin(() => {
@@ -28,13 +36,15 @@ export default defineNuxtPlugin(() => {
       pendingNamespaces.forEach((config, namespace) => {
         if (!initializedNamespaces.has(namespace)) {
           console.log('[nuxt-calcom] Initializing namespace:', namespace)
-          window.Cal('init', namespace, { origin: 'https://cal.com' })
-          initializedNamespaces.add(namespace)
+          if (window.Cal) {
+            window.Cal('init', namespace, { origin: 'https://cal.com' })
+            initializedNamespaces.add(namespace)
 
-          // Apply config immediately
-          if (config && Object.keys(config).length > 0) {
-            console.log('[nuxt-calcom] Applying config to namespace:', namespace, config)
-            window.Cal.ns[namespace]('ui', config)
+            // Apply config immediately
+            if (config && Object.keys(config).length > 0 && window.Cal.ns?.[namespace]) {
+              console.log('[nuxt-calcom] Applying config to namespace:', namespace, config)
+              window.Cal.ns[namespace]('ui', config)
+            }
           }
         }
       })
@@ -89,7 +99,7 @@ export default defineNuxtPlugin(() => {
             pendingNamespaces.delete(namespace)
 
             // Apply config if provided
-            if (config && Object.keys(config).length > 0) {
+            if (config && Object.keys(config).length > 0 && window.Cal.ns?.[namespace]) {
               console.log('[nuxt-calcom] Applying config to namespace:', namespace, config)
               window.Cal.ns[namespace]('ui', config)
             }
@@ -109,7 +119,7 @@ export default defineNuxtPlugin(() => {
     },
 
     isNamespaceReady: (namespace: string): boolean => {
-      return (
+      return !!(
         initializedNamespaces.has(namespace) &&
         window.Cal?.ns &&
         typeof window.Cal.ns[namespace] === 'function'

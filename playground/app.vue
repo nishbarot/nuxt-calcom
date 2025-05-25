@@ -99,7 +99,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 
 const userInputLink = ref('')
 const isCalLoaded = ref(false)
-const DEMO_LINK = 'demo' // A known working demo link
+const DEMO_LINK = 'tanishq-barot-n3wisw' // A known working demo link
 
 // Determine the effective calLink to use
 const effectiveCalLink = computed(() => {
