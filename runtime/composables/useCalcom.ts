@@ -1,5 +1,6 @@
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
 import { useNuxtApp, useRuntimeConfig } from '#app'
+import type { CalcomPlugin } from '../types'
 
 export interface CalcomOptions {
   calLink?: string
@@ -15,7 +16,7 @@ export interface CalcomAPI {
 }
 
 export const useCalcom = (): CalcomAPI => {
-  const { $calcom } = useNuxtApp()
+  const { $calcom } = useNuxtApp() as { $calcom: CalcomPlugin }
   const config = useRuntimeConfig()
 
   const getDefaultOptions = (): Record<string, any> => {
@@ -127,7 +128,7 @@ export const useCalcom = (): CalcomAPI => {
   }
 
   const waitForCal = async (): Promise<void> => {
-    return $calcom.waitForCal()
+    await $calcom.waitForCal()
   }
 
   return {

@@ -23,6 +23,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import type { StyleValue } from 'vue'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
 import { useRuntimeConfig, useNuxtApp } from '#app'
+import type { CalcomPlugin } from '../types'
 
 interface Props {
   calLink?: string
@@ -41,7 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const config = useRuntimeConfig()
-const { $calcom } = useNuxtApp()
+const { $calcom } = useNuxtApp() as { $calcom: CalcomPlugin }
 const buttonRef = ref<HTMLElement>()
 
 // Generate a unique ID for the button and namespace, though namespace is no longer programmatically used for popup
