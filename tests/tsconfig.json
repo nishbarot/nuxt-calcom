@@ -1,13 +1,23 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "types": ["vitest/globals", "@vue/test-utils", "@types/node", "happy-dom"],
+    "target": "ESNext",
+    "lib": ["ESNext", "DOM"],
+    "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "strict": true,
-    "noEmit": true,
-    "isolatedModules": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "jsx": "preserve",
+    "types": ["vitest/globals", "@vue/test-utils"],
+    "paths": {
+      "#app": ["../tests/mocks/nuxt-app.ts"],
+      "#app/*": ["../tests/mocks/nuxt-app.ts"],
+      "~": ["../"],
+      "~/*": ["../*"],
+      "@": ["../"],
+      "@/*": ["../*"]
+    }
   },
-  "include": ["./**/*", "../runtime/**/*"]
+  "include": ["../vitest-env.d.ts", "./vue-shim.d.ts", "./**/*.ts", "../runtime/**/*.vue"]
 }

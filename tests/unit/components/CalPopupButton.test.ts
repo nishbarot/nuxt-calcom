@@ -138,7 +138,7 @@ describe('CalPopupButton', () => {
       expect(config.customOption).toBe(true)
     })
 
-    it('should generate unique IDs and namespaces', () => {
+    it('should generate unique IDs', () => {
       const wrapper1 = mount(CalPopupButton)
       const wrapper2 = mount(CalPopupButton)
 
@@ -146,9 +146,6 @@ describe('CalPopupButton', () => {
       const button2 = wrapper2.find('button')
 
       expect(button1.attributes('id')).not.toBe(button2.attributes('id'))
-      expect(button1.attributes('data-cal-namespace')).not.toBe(
-        button2.attributes('data-cal-namespace')
-      )
     })
   })
 

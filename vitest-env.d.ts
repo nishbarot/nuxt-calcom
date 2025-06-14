@@ -12,6 +12,15 @@ declare global {
   const afterEach: typeof import('vitest').afterEach
   const beforeAll: typeof import('vitest').beforeAll
   const afterAll: typeof import('vitest').afterAll
+
+  // Cal.com API types
+  interface Window {
+    Cal?: {
+      (action: string, ...args: any[]): any
+      loaded?: boolean
+      ns?: Record<string, any>
+    }
+  }
 }
 
 export {}

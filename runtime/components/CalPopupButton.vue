@@ -6,7 +6,6 @@
       :class="buttonClass"
       :style="buttonStyle"
       :data-cal-link="calLink"
-      :data-cal-namespace="namespace"
       :data-cal-config="configString"
     >
       <slot>{{ text }}</slot>
@@ -20,57 +19,52 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
+import type { StyleValue } from 'vue'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
 import { useRuntimeConfig, useNuxtApp } from '#app'
+import type { CalcomPlugin } from '../types'
 
 interface Props {
   calLink?: string
   text?: string
-  uiOptions?: Record<string, any>
+  uiOptions?: Record<string, unknown>
   buttonClass?: string
-  buttonStyle?: Record<string, any>
+  buttonStyle?: StyleValue
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  calLink: undefined,
   text: 'Schedule Meeting',
   uiOptions: () => ({}),
+  buttonClass: undefined,
+  buttonStyle: undefined,
 })
 
 const config = useRuntimeConfig()
-const { $calcom } = useNuxtApp()
+const { $calcom } = useNuxtApp() as { $calcom: CalcomPlugin }
 const buttonRef = ref<HTMLElement>()
 
-// Generate unique button ID and namespace
-const buttonId = ref(`cal-popup-btn-${Math.random().toString(36).substr(2, 9)}`)
-const namespace = ref(`popup-${Math.random().toString(36).substr(2, 9)}`)
+// Generate a unique ID for the button and namespace, though namespace is no longer programmatically used for popup
+const instanceId = Math.random().toString(36).substr(2, 9)
+const buttonId = `cal-popup-btn-${instanceId}`
 
-// Compute the cal link to use (prop takes precedence over config) with URL parsing
+// Compute the cal link to use (prop takes precedence over config)
 const calLink = computed(() => {
-  const calcomConfig = config.public.calcom as any
-  const rawLink = props.calLink || calcomConfig?.defaultLink
-
+  const calcomConfig = config.public.calcom as Record<string, unknown>
+  const rawLink = props.calLink || (calcomConfig?.defaultLink as string)
   if (!rawLink) {
     console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
-    return 'demo' // fallback to demo
+    return 'demo'
   }
-
-  // Parse and validate the link to handle both username and full URL formats
-  const parsedLink = parseAndValidateCalLink(rawLink, 'demo')
-
-  // Log the transformation for debugging
-  if (rawLink !== parsedLink) {
-    console.log('[nuxt-calcom] Normalized Cal.com link:', { original: rawLink, parsed: parsedLink })
-  }
-
-  return parsedLink
+  return parseAndValidateCalLink(rawLink, 'demo')
 })
 
 // Compute UI options with defaults from config
 const computedUiOptions = computed(() => {
-  const calcomConfig = config.public.calcom as any
+  const calcomConfig = config.public.calcom as Record<string, unknown>
   return {
-    ...calcomConfig?.uiOptions,
+    ...(calcomConfig?.uiOptions as Record<string, unknown>),
     ...props.uiOptions,
     theme: calcomConfig?.theme,
     branding: calcomConfig?.branding,
@@ -84,35 +78,31 @@ const configString = computed(() => {
   return Object.keys(options).length > 0 ? JSON.stringify(options) : ''
 })
 
-onMounted(async () => {
-  // Only register namespace on client-side where $calcom is available
+// The click handler is no longer needed. Cal.com's embed script
+// will automatically detect the `data-cal-link` attribute and handle the popup.
+
+const ensureCalScriptIsReady = async () => {
   if (import.meta.client && $calcom) {
     try {
-      // Register the namespace immediately - this ensures it's ready before any clicks
-      await $calcom.registerNamespace(namespace.value, computedUiOptions.value)
-
-      // Verify the namespace is ready
-      if ($calcom.isNamespaceReady(namespace.value)) {
-        console.log(
-          '[nuxt-calcom] Popup button ready - namespace properly initialized and ready for clicks'
-        )
-      } else {
-        console.warn('[nuxt-calcom] Namespace not ready yet:', namespace.value)
-        // Wait a bit and check again
-        setTimeout(() => {
-          if ($calcom.isNamespaceReady(namespace.value)) {
-            console.log('[nuxt-calcom] Popup button ready (delayed) - namespace now ready')
-          } else {
-            console.error('[nuxt-calcom] Namespace registration failed:', namespace.value)
-          }
-        }, 100)
-      }
+      await $calcom.waitForCal()
+      console.log('[nuxt-calcom] Cal script ready. PopupButton will be handled by embed.js.')
     } catch (error) {
-      console.error('[nuxt-calcom] Failed to register namespace:', error)
+      console.error('[nuxt-calcom] Error ensuring Cal.com script is loaded for PopupButton:', error)
     }
-  } else {
-    console.log('[DEBUG] Skipping namespace registration - not on client or $calcom not available')
   }
+}
+
+watch(calLink, newCalLink => {
+  if (newCalLink) {
+    console.log(
+      '[nuxt-calcom] PopupButton calLink changed. The data-cal-link attribute has been updated to:',
+      newCalLink
+    )
+  }
+})
+
+onMounted(() => {
+  ensureCalScriptIsReady()
 })
 </script>
 
