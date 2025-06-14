@@ -14,6 +14,14 @@
           type="text"
           placeholder="demo-user or https://cal.com/demo-user/30min"
         />
+        <div
+          v-if="inputValidation"
+          class="input-validation"
+          :class="{ valid: inputValidation.isValid, invalid: !inputValidation.isValid }"
+        >
+          <span class="validation-icon">{{ inputValidation.isValid ? '✅' : '❌' }}</span>
+          <span class="validation-message">{{ inputValidation.message }}</span>
+        </div>
         <div class="input-help">
           <p><strong>Supported formats:</strong></p>
           <ul>
@@ -53,7 +61,6 @@
         </p>
         <ClientOnly fallback-tag="div" fallback="Loading inline widget...">
           <CalInlineWidget
-            :key="effectiveCalLink"
             :cal-link="effectiveCalLink"
             :height="500"
             style="border: 1px solid #ccc; border-radius: 8px; min-height: 500px"
@@ -67,7 +74,6 @@
         <p class="widget-description">Opens the calendar in a modal popup when clicked.</p>
         <ClientOnly fallback-tag="div" fallback="Loading popup button...">
           <CalPopupButton
-            :key="effectiveCalLink + '-popup'"
             :cal-link="effectiveCalLink"
             :text="`Book: ${effectiveCalLink}`"
             button-class="test-popup-button"
@@ -80,7 +86,6 @@
 
     <ClientOnly>
       <CalFloatingWidget
-        :key="effectiveCalLink + '-floating'"
         :cal-link="effectiveCalLink"
         :text="`Float: ${effectiveCalLink}`"
         position="bottom-right"
@@ -96,14 +101,80 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
+import { useRuntimeConfig } from 'nuxt/app'
 
 const userInputLink = ref('')
 const isCalLoaded = ref(false)
-const DEMO_LINK = 'tanishq-barot-n3wisw' // A known working demo link
+const inputValidation = ref<{ isValid: boolean; message: string } | null>(null)
+
+// Get the default link from Nuxt config
+const config = useRuntimeConfig()
+const configDefault = computed(() => {
+  const calcomConfig = config.public.calcom as Record<string, unknown>
+  return calcomConfig?.defaultLink || 'demo'
+})
+
+// Validate user input
+const validateInput = (input: string) => {
+  if (!input.trim()) {
+    inputValidation.value = null
+    return
+  }
+
+  const trimmed = input.trim()
+
+  // Check if it's an email - more accurate regex that requires proper email format
+  // Must start with alphanumeric, not @, and have proper email structure
+  const emailRegex = /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/
+  if (emailRegex.test(trimmed)) {
+    inputValidation.value = {
+      isValid: false,
+      message: 'Email addresses are not supported. Please enter a Cal.com username or URL instead.',
+    }
+    return
+  }
+
+  // Check if it starts with @ but is not an email (like @https://...)
+  if (trimmed.startsWith('@') && !emailRegex.test(trimmed)) {
+    inputValidation.value = {
+      isValid: false,
+      message: 'URLs starting with @ are not valid. Please remove the @ symbol.',
+    }
+    return
+  }
+
+  // Check if it's a valid Cal.com format
+  const isUrl = trimmed.includes('://') || trimmed.includes('cal.com')
+  const isUsername = /^[a-zA-Z0-9\-_/]+$/.test(trimmed)
+
+  if (isUrl) {
+    if (trimmed.includes('cal.com')) {
+      inputValidation.value = {
+        isValid: true,
+        message: 'Valid Cal.com URL detected',
+      }
+    } else {
+      inputValidation.value = {
+        isValid: false,
+        message: 'Please enter a Cal.com URL or username',
+      }
+    }
+  } else if (isUsername) {
+    inputValidation.value = {
+      isValid: true,
+      message: 'Valid Cal.com username format',
+    }
+  } else {
+    inputValidation.value = {
+      isValid: false,
+      message: 'Invalid format. Use: username, username/event, or https://cal.com/username',
+    }
+  }
+}
 
 // Determine the effective calLink to use
 const effectiveCalLink = computed(() => {
-  return userInputLink.value || DEMO_LINK
+  return userInputLink.value || configDefault.value
 })
 
 const checkCalStatus = () => {
@@ -112,10 +183,14 @@ const checkCalStatus = () => {
   }
 }
 
-watch(userInputLink, () => {
-  // Optional: Could add a small delay or debounce if needed before re-rendering components,
-  // but Vue's reactivity with :key should handle it well.
-  console.log(`Input changed, effective link: ${effectiveCalLink.value}`)
+watch(userInputLink, newValue => {
+  validateInput(newValue)
+  // Don't force re-render - let widgets reactively update their calLink prop
+  console.log(`[Playground] Input changed:`, {
+    userInput: newValue,
+    effectiveLink: effectiveCalLink.value,
+    configDefault: configDefault.value,
+  })
 })
 
 onMounted(() => {
@@ -202,6 +277,36 @@ onMounted(() => {
   outline: none;
   border-color: #3b82f6;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.input-validation {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.input-validation.valid {
+  background-color: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+
+.input-validation.invalid {
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+.validation-icon {
+  font-size: 1rem;
+}
+
+.validation-message {
+  flex: 1;
 }
 
 .input-help {

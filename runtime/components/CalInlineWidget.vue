@@ -4,46 +4,54 @@
       <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
     </div>
     <template #fallback>
-      <div class="cal-loading-placeholder" :style="containerStyle">
+      <div v-if="isLoading && !loadError" class="cal-loading-placeholder" :style="containerStyle">
         <div class="loading-content">
           <div class="loading-spinner" />
           <p>Loading Cal.com calendar...</p>
         </div>
+      </div>
+      <div v-if="loadError" class="cal-error-placeholder" :style="containerStyle">
+        <p>Error loading calendar: {{ loadError }}</p>
       </div>
     </template>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue'
 import { parseAndValidateCalLink } from '../utils/calLinkParser'
 import { useRuntimeConfig, useNuxtApp } from '#app'
 
 interface Props {
   calLink?: string
-  uiOptions?: Record<string, any>
-  style?: Record<string, any>
+  uiOptions?: Record<string, unknown>
+  style?: Record<string, unknown>
   height?: string | number
   width?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  calLink: undefined,
+  uiOptions: () => ({}),
+  style: () => ({}),
   height: '630px',
   width: '100%',
-  uiOptions: () => ({}),
 })
 
 const config = useRuntimeConfig()
 const { $calcom } = useNuxtApp()
 const containerRef = ref<HTMLElement>()
+const isLoading = ref(true) // Controls visibility of the loading placeholder
+const loadError = ref<string | null>(null) // Stores error message if link fails
 
 // Generate unique container ID
 const containerId = ref(`cal-inline-${Math.random().toString(36).substr(2, 9)}`)
+const widgetNamespace = computed(() => `cal-${containerId.value}`)
 
 // Compute the cal link to use (prop takes precedence over config) with URL parsing
 const calLink = computed(() => {
-  const calcomConfig = config.public.calcom as any
-  const rawLink = props.calLink || calcomConfig?.defaultLink
+  const calcomConfig = config.public.calcom as Record<string, unknown>
+  const rawLink = props.calLink || (calcomConfig?.defaultLink as string)
 
   if (!rawLink) {
     console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
@@ -70,9 +78,9 @@ const containerStyle = computed(() => ({
 
 // Compute UI options with defaults from config
 const computedUiOptions = computed(() => {
-  const calcomConfig = config.public.calcom as any
+  const calcomConfig = config.public.calcom as Record<string, unknown>
   return {
-    ...calcomConfig?.uiOptions,
+    ...(calcomConfig?.uiOptions as Record<string, unknown>),
     ...props.uiOptions,
     theme: calcomConfig?.theme,
     branding: calcomConfig?.branding,
@@ -82,6 +90,13 @@ const computedUiOptions = computed(() => {
 
 let embedInitialized = false
 let retryCount = 0
+
+const resetEmbedState = () => {
+  embedInitialized = false
+  retryCount = 0
+  isLoading.value = true
+  loadError.value = null
+}
 
 const initializeEmbed = async () => {
   if (!calLink.value || embedInitialized) return
@@ -144,22 +159,74 @@ const initializeEmbed = async () => {
       parentElement: element.parentElement,
     })
 
-    // Use the official Cal.com inline API exactly as documented
-    console.log('[DEBUG] Calling Cal inline with params:', {
-      elementOrSelector: `#${containerId.value}`,
-      calLink: calLink.value,
-      config: computedUiOptions.value,
-    })
+    // Use the plugin to initialize and manage the namespace
+    if (import.meta.client && $calcom) {
+      try {
+        await $calcom.waitForCal()
+        if (window.Cal && typeof window.Cal === 'function') {
+          window.Cal('init', widgetNamespace.value, { origin: 'https://cal.com' })
 
-    window.Cal('inline', {
-      elementOrSelector: `#${containerId.value}`,
-      calLink: calLink.value,
-      config: computedUiOptions.value,
-    })
+          // Debugging: check if element is available
+          document.getElementById(containerId.value)
 
-    embedInitialized = true
-    retryCount = 0 // Reset retry count on success
-    console.log('[nuxt-calcom] Inline widget initialized successfully for:', calLink.value)
+          // Call inline action under the specific namespace
+          if (window.Cal.ns && typeof window.Cal.ns[widgetNamespace.value] === 'function') {
+            window.Cal.ns[widgetNamespace.value]('inline', {
+              elementOrSelector: `#${containerId.value}`,
+              calLink: calLink.value,
+              config: computedUiOptions.value,
+            })
+
+            // Listen for linkReady and linkFailed events on this namespace
+            window.Cal.ns[widgetNamespace.value]('on', {
+              action: 'linkReady',
+              callback: () => {
+                console.log(
+                  `[nuxt-calcom] Inline widget linkReady for namespace: ${widgetNamespace.value}`
+                )
+                isLoading.value = false
+                loadError.value = null
+              },
+            })
+
+            window.Cal.ns[widgetNamespace.value]('on', {
+              action: 'linkFailed',
+              callback: (event: { detail: { data: { msg: string } } }) => {
+                const errorData = event.detail?.data || {}
+                const errorMessage = errorData.msg || 'Unknown error loading calendar.'
+                console.error(
+                  `[nuxt-calcom] Inline widget linkFailed for namespace: ${widgetNamespace.value}`,
+                  errorData
+                )
+                isLoading.value = false
+                loadError.value = errorMessage
+              },
+            })
+          } else {
+            // Fallback to global if namespace init somehow failed (should not happen)
+            console.warn(
+              `[nuxt-calcom] Namespace ${widgetNamespace.value} not found, falling back to global Cal('inline')`
+            )
+            window.Cal('inline', {
+              elementOrSelector: `#${containerId.value}`,
+              calLink: calLink.value,
+              config: computedUiOptions.value,
+            })
+          }
+        }
+
+        embedInitialized = true
+        retryCount = 0 // Reset retry count on success
+        console.log('[nuxt-calcom] Inline widget initialized successfully for:', calLink.value)
+      } catch (error) {
+        console.error('[nuxt-calcom] Failed to initialize inline widget:', error)
+        if (error instanceof Error) {
+          console.error('[DEBUG] Error details:', error.message, error.stack)
+        } else {
+          console.error('[DEBUG] Error details:', String(error))
+        }
+      }
+    }
   } catch (error) {
     console.error('[nuxt-calcom] Failed to initialize inline widget:', error)
     if (error instanceof Error) {
@@ -172,12 +239,35 @@ const initializeEmbed = async () => {
 
 const destroyEmbed = () => {
   if (containerRef.value && embedInitialized) {
-    // Clear the container content
+    // Clear any specific listeners if Cal.com API supports it for namespaces.
+    // For now, they should cease to function once the iframe is gone or ns is reused.
     containerRef.value.innerHTML = ''
     embedInitialized = false
-    console.log('[nuxt-calcom] Inline widget destroyed')
+    isLoading.value = true // Reset for potential re-initialization
+    loadError.value = null // Reset error state
+    console.log('[nuxt-calcom] Inline widget destroyed for namespace:', widgetNamespace.value)
   }
 }
+
+// Watch for calLink changes and reinitialize when needed
+watch(
+  calLink,
+  async (newCalLink, oldCalLink) => {
+    if (newCalLink !== oldCalLink && newCalLink) {
+      console.log('[nuxt-calcom] InlineWidget calLink changed, reinitializing:', {
+        old: oldCalLink,
+        new: newCalLink,
+      })
+      destroyEmbed()
+      resetEmbedState()
+      // Small delay to ensure cleanup is complete
+      setTimeout(() => {
+        initializeEmbed()
+      }, 200)
+    }
+  },
+  { immediate: false }
+)
 
 onMounted(async () => {
   console.log('[DEBUG] Component mounted, containerRef.value:', containerRef.value)
