@@ -406,6 +406,12 @@ For fine-grained control, you might be able to override some Cal.com internal st
 
 ---
 
+## Known Issues
+
+- **Floating Widget DOM Leak**: When the `calLink` of the `<CalFloatingWidget>` is changed, the underlying Cal.com script may not properly clean up the old widget's button from the DOM. This can result in a temporary "ghost" button during re-rendering. The module ensures the user-facing functionality is correct, but this is a known limitation of the third-party script.
+
+---
+
 ## 🛠️ Development Setup
 
 If you want to contribute or work on this module locally:
