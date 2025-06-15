@@ -11,7 +11,29 @@ export function parseCalLink(input: string): string {
   }
 
   // Trim whitespace
-  const trimmed = input.trim()
+  let trimmed = input.trim()
+
+  // Remove leading @ symbol if present (common in social media contexts)
+  if (trimmed.startsWith('@')) {
+    trimmed = trimmed.substring(1)
+    console.log('[nuxt-calcom] Removed leading @ symbol from input:', input, '→', trimmed)
+  }
+
+  // Check if input looks like an email address
+  const emailRegex = /^[a-zA-Z0-9][a-zA-Z0-9._%+-]*@[a-zA-Z0-9][a-zA-Z0-9.-]*\.[a-zA-Z]{2,}$/
+  if (emailRegex.test(trimmed)) {
+    console.warn(
+      '[nuxt-calcom] Email address detected as input. Please provide a Cal.com username or URL instead:',
+      trimmed
+    )
+    // Try to extract username part before @ symbol as a fallback
+    const username = trimmed.split('@')[0]
+    if (username && /^[a-zA-Z0-9\-_]+$/.test(username)) {
+      console.log('[nuxt-calcom] Attempting to use email username part as Cal.com link:', username)
+      return username
+    }
+    return 'demo' // fallback if email username part is invalid
+  }
 
   // If it's already just a username/slug (no protocol/domain), return as-is
   if (!trimmed.includes('://') && !trimmed.includes('cal.com')) {
@@ -98,7 +120,7 @@ export function validateCalLink(link: string): boolean {
 
   // Should not contain invalid characters for usernames
   // Cal.com usernames typically allow letters, numbers, hyphens, underscores, and forward slashes
-  const validPattern = /^[a-zA-Z0-9\-_\/]+$/
+  const validPattern = /^[a-zA-Z0-9_/-]+$/
   if (!validPattern.test(trimmed)) {
     return false
   }

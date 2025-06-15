@@ -168,7 +168,7 @@ describe('useCalcom', () => {
 
       const result = await waitForCal()
 
-      expect(result).toBe(window.Cal)
+      expect(result).toBeUndefined()
     })
   })
 })

@@ -29,7 +29,52 @@ _No critical issues at the moment._
 
 ## ✅ Completed Tasks
 
+### 05/26/2025
+
+- ✅ **Fixed TypeScript Configuration Issues**: Resolved TypeScript errors in IDE and test environment by creating proper type declarations and separate test configuration.
+
+  - ✅ Created separate `tests/tsconfig.json` with proper vitest globals and Vue test utils types
+  - ✅ Added `tests/vue-shim.d.ts` for Vue single-file component support in TypeScript
+  - ✅ Created `runtime/types/index.ts` with proper Cal.com plugin type declarations
+  - ✅ Fixed `$calcom` plugin typing issues in components and composables
+  - ✅ Resolved "Module 'vitest' has no exported member" errors in test files
+  - ✅ Fixed "Property 'waitForCal' does not exist" errors in components
+  - ✅ All tests continue to pass (51/51) with proper TypeScript support
+  - ✅ Linting passes with no TypeScript errors, only minor warnings remain
+
+- ✅ **Fixed Cal.com Embed Widgets Not Working**: Identified and resolved an issue where the inline, popup, and floating widgets failed to load with user-provided Cal.com links. The root cause was a hardcoded `origin` parameter pointing to `app.cal.com` instead of the correct `cal.com` for public booking pages.
+  - ✅ Updated the `origin` to `https://cal.com` in `runtime/plugin.ts`.
+  - ✅ Corrected the `origin` in `runtime/components/CalInlineWidget.vue`.
+  - ✅ Corrected the `origin` in `runtime/components/CalPopupButton.vue`.
+  - ✅ Corrected the `origin` in `runtime/components/CalFloatingWidget.vue`.
+  - ✅ Fixed a linter error in `CalInlineWidget.vue` that occurred during the fix.
+
 ### 01/25/2025
+
+✅ **Fixed Critical Cal.com Widget Issues**
+
+- ✅ Fixed hardcoded default link issue in playground - now properly uses Nuxt config default instead of `tanishq-barot-n3wisw`
+- ✅ Improved email input handling - now detects email addresses and provides helpful error messages
+- ✅ Enhanced link parser to extract username from email addresses as fallback when possible
+- ✅ Fixed popup button implementation with proper click handler and Cal.com API usage
+- ✅ Added preload functionality to popup buttons for better performance
+- ✅ Fixed floating widget implementation to use correct Cal.com `floatingButton` API
+- ✅ Added input validation with real-time feedback for users
+- ✅ Improved user experience with visual validation indicators (✅/❌)
+- ✅ Enhanced error messages to guide users toward correct input formats
+- ✅ Fixed widget initialization timing issues and namespace handling
+- ✅ Added timing delays to ensure proper namespace initialization before popup opening
+- ✅ Improved floating widget with reliable click handler and popup functionality
+- ✅ Fixed TypeScript linter errors with proper null checks for window.Cal
+- ✅ Fixed @ symbol handling in URLs (e.g., @https://cal.com/username) by stripping the @ prefix
+- ✅ Improved email validation regex to be more accurate and not trigger on @ URLs
+- ✅ **CRITICAL FIX**: Removed forced widget re-rendering that was breaking popup/float functionality after input changes
+- ✅ Made all widgets reactive to calLink prop changes without destroying component instances
+- ✅ Added proper cleanup and reinitialization for inline widgets when calLink changes
+- ✅ Fixed popup and floating widgets to maintain their event handlers when calLink updates
+- ✅ Added comprehensive debugging logs to track calLink prop changes and widget reinitialization
+- ✅ Improved namespace reinitialization to ensure fresh state when calLink changes
+- ✅ Added timing delays to prevent race conditions during widget reinitialization
 
 ✅ **Successfully Fixed PNPM Workflow Step Ordering Issues**
 
@@ -168,6 +213,10 @@ _No critical issues at the moment._
 
 ### 05/25/2025
 
+- ✅ **FINAL FIX**: Resolved Prettier/ESLint conflicts by disabling ESLint stylistic rules and aligning configurations.
+- ✅ Updated Prettier configuration to use trailing commas (`"trailingComma": "es5"`) for better compatibility.
+- ✅ Disabled ESLint stylistic rules (`stylistic: false`) to prevent conflicts with Prettier formatting.
+- ✅ Both `pnpm format:check` and `pnpm lint` now pass successfully with only acceptable warnings.
 - ✅ Successfully committed and pushed all linting fixes to resolve CI failures.
 - ✅ Fixed Windows compatibility issues in GitHub Actions by replacing `rm -f .eslintignore` with cross-platform Node.js command.
 - ✅ Resolved all 188 linting errors (missing trailing commas, formatting issues) by running `pnpm lint:fix`.
