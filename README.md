@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/your-username/nuxt-calcom/main/.github/assets/logo.png" alt="Nuxt Cal.com Module Logo" width="150">
+  <img src="https://raw.githubusercontent.com/nishbarot/nuxt-calcom/main/.github/assets/logo.png" alt="Nuxt Cal.com Module Logo" width="150">
   <h1>🗓️ Nuxt Cal.com Module</h1>
   <p>
     <strong>The most powerful and flexible Cal.com integration for Nuxt 3.</strong>
@@ -406,13 +406,19 @@ For fine-grained control, you might be able to override some Cal.com internal st
 
 ---
 
+## Known Issues
+
+- **Floating Widget DOM Leak**: When the `calLink` of the `<CalFloatingWidget>` is changed, the underlying Cal.com script may not properly clean up the old widget's button from the DOM. This can result in a temporary "ghost" button during re-rendering. The module ensures the user-facing functionality is correct, but this is a known limitation of the third-party script.
+
+---
+
 ## 🛠️ Development Setup
 
 If you want to contribute or work on this module locally:
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/nuxt-calcom.git
+git clone https://github.com/nishbarot/nuxt-calcom.git
 cd nuxt-calcom
 
 # 2. Install dependencies
@@ -444,8 +450,8 @@ pnpm dev
 - **[Cal.com Official Website](https://cal.com)**
 - **[Cal.com Embed Documentation](https://cal.com/docs/embeds/introduction)**
 - **[Nuxt Modules](https://nuxt.com/modules)**
-- **[Report an Issue](https://github.com/your-username/nuxt-calcom/issues)**
-- **[Contribute](https://github.com/your-username/nuxt-calcom/pulls)**
+- **[Report an Issue](https://github.com/nishbarot/nuxt-calcom/issues)**
+- **[Contribute](https://github.com/nishbarot/nuxt-calcom/pulls)**
 
 <!-- Badges section - these should be at the top but repeated here for structure -->
 <!--
