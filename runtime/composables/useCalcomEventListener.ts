@@ -13,9 +13,9 @@ export type CalcomEventType =
 
 export interface CalcomEventDetail {
   action: string
-  data?: any
+  data?: unknown
   namespace?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface CalcomEventCallback {
@@ -55,10 +55,12 @@ export const useCalcomEventListener = (
       }
 
       // Register the event listener with Cal.com using official API
-      window.Cal('on', {
-        action: eventType,
-        callback: eventHandler,
-      })
+      if (window.Cal) {
+        window.Cal('on', {
+          action: eventType,
+          callback: eventHandler,
+        })
+      }
 
       isListening = true
 

@@ -1,65 +1,49 @@
 <template>
   <ClientOnly>
-    <div>
-      <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
-    </div>
+    <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
     <template #fallback>
-      <div class="cal-loading-placeholder" :style="containerStyle">
+      <div v-if="isLoading && !loadError" class="cal-loading-placeholder" :style="containerStyle">
         <div class="loading-content">
           <div class="loading-spinner" />
           <p>Loading Cal.com calendar...</p>
         </div>
+      </div>
+      <div v-if="loadError" class="cal-error-placeholder" :style="containerStyle">
+        <p>Error loading calendar: {{ loadError }}</p>
       </div>
     </template>
   </ClientOnly>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed, nextTick } from 'vue'
-import { parseAndValidateCalLink } from '../utils/calLinkParser'
+import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
 import { useRuntimeConfig, useNuxtApp } from '#app'
 
 interface Props {
   calLink?: string
-  uiOptions?: Record<string, any>
-  style?: Record<string, any>
+  uiOptions?: Record<string, unknown>
+  style?: Record<string, unknown>
   height?: string | number
   width?: string | number
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  calLink: undefined,
+  uiOptions: () => ({}),
+  style: () => ({}),
   height: '630px',
   width: '100%',
-  uiOptions: () => ({}),
 })
 
 const config = useRuntimeConfig()
 const { $calcom } = useNuxtApp()
 const containerRef = ref<HTMLElement>()
+const isLoading = ref(true)
+const loadError = ref<string | null>(null)
 
-// Generate unique container ID
-const containerId = ref(`cal-inline-${Math.random().toString(36).substr(2, 9)}`)
-
-// Compute the cal link to use (prop takes precedence over config) with URL parsing
-const calLink = computed(() => {
-  const calcomConfig = config.public.calcom as any
-  const rawLink = props.calLink || calcomConfig?.defaultLink
-
-  if (!rawLink) {
-    console.warn('[nuxt-calcom] No calLink provided and no defaultLink configured')
-    return 'demo' // fallback to demo
-  }
-
-  // Parse and validate the link to handle both username and full URL formats
-  const parsedLink = parseAndValidateCalLink(rawLink, 'demo')
-
-  // Log the transformation for debugging
-  if (rawLink !== parsedLink) {
-    console.log('[nuxt-calcom] Normalized Cal.com link:', { original: rawLink, parsed: parsedLink })
-  }
-
-  return parsedLink
-})
+// Generate a unique ID for the container
+const instanceId = Math.random().toString(36).substr(2, 9)
+const containerId = `cal-inline-${instanceId}`
 
 // Compute container styles
 const containerStyle = computed(() => ({
@@ -68,11 +52,11 @@ const containerStyle = computed(() => ({
   ...props.style,
 }))
 
-// Compute UI options with defaults from config
+// Compute UI options
 const computedUiOptions = computed(() => {
-  const calcomConfig = config.public.calcom as any
+  const calcomConfig = config.public.calcom as Record<string, unknown>
   return {
-    ...calcomConfig?.uiOptions,
+    ...(calcomConfig?.uiOptions as Record<string, unknown>),
     ...props.uiOptions,
     theme: calcomConfig?.theme,
     branding: calcomConfig?.branding,
@@ -80,130 +64,55 @@ const computedUiOptions = computed(() => {
   }
 })
 
-let embedInitialized = false
-let retryCount = 0
+let isEmbedInitialized = false
 
 const initializeEmbed = async () => {
-  if (!calLink.value || embedInitialized) return
+  if (isEmbedInitialized || !import.meta.client) return
+
+  await nextTick()
+  const element = document.getElementById(containerId)
+  if (!element) {
+    console.error(`[nuxt-calcom] Could not find element with ID: ${containerId}`)
+    return
+  }
 
   try {
-    console.log('[DEBUG] Starting inline embed initialization...')
-    console.log('[DEBUG] Container ID:', containerId.value)
-    console.log('[DEBUG] Cal link:', calLink.value)
-
-    // Wait for Cal to be available first
     await $calcom.waitForCal()
-    console.log('[DEBUG] Cal.com script ready')
-
-    // Ensure Vue has finished rendering the DOM
-    await nextTick()
-
-    // Wait a bit more for hydration to complete
-    await new Promise(resolve => setTimeout(resolve, 100))
-
-    // Now check if element exists using both methods
-    const elementById = document.getElementById(containerId.value)
-    const elementByRef = containerRef.value
-
-    console.log('[DEBUG] Element by ID:', !!elementById, elementById)
-    console.log('[DEBUG] Element by ref:', !!elementByRef, elementByRef)
-
-    const element = elementByRef || elementById
-
-    if (!element) {
-      console.error('[DEBUG] Element still not found! DOM state:', {
-        documentReady: document.readyState,
-        bodyChildren: document.body?.children.length,
-        containerId: containerId.value,
+    if (window.Cal) {
+      window.Cal('inline', {
+        elementOrSelector: `#${containerId}`,
+        calLink: props.calLink,
+        config: computedUiOptions.value,
       })
-
-      // Try one more time after a longer delay
-      if (retryCount < 5) {
-        retryCount++
-        console.log(`[DEBUG] Retry attempt ${retryCount}/5 in 200ms...`)
-        setTimeout(() => initializeEmbed(), 200)
-        return
-      } else {
-        console.error('[DEBUG] Max retries reached. Element not found.')
-        return
-      }
+      window.Cal('on', {
+        action: 'linkReady',
+        callback: () => {
+          isLoading.value = false
+          loadError.value = null
+          console.log(`[nuxt-calcom] Inline widget is ready for: ${props.calLink}`)
+        },
+      })
+      window.Cal('on', {
+        action: 'linkFailed',
+        callback: (e: { detail: { data: { msg: string } } }) => {
+          isLoading.value = false
+          loadError.value = e.detail?.data?.msg || 'An unknown error occurred.'
+          console.error(`[nuxt-calcom] Inline widget failed to load:`, e.detail)
+        },
+      })
+      isEmbedInitialized = true
     }
-
-    // Ensure element is ready and has minimum dimensions
-    if (element.offsetWidth === 0 || element.offsetHeight === 0) {
-      console.log('[DEBUG] Element not ready (no dimensions), retrying...')
-      setTimeout(() => initializeEmbed(), 100)
-      return
-    }
-
-    console.log('[DEBUG] Element ready, initializing embed...')
-    console.log('[DEBUG] Element details:', {
-      id: element.id,
-      offsetWidth: element.offsetWidth,
-      offsetHeight: element.offsetHeight,
-      parentElement: element.parentElement,
-    })
-
-    // Use the official Cal.com inline API exactly as documented
-    console.log('[DEBUG] Calling Cal inline with params:', {
-      elementOrSelector: `#${containerId.value}`,
-      calLink: calLink.value,
-      config: computedUiOptions.value,
-    })
-
-    window.Cal('inline', {
-      elementOrSelector: `#${containerId.value}`,
-      calLink: calLink.value,
-      config: computedUiOptions.value,
-    })
-
-    embedInitialized = true
-    retryCount = 0 // Reset retry count on success
-    console.log('[nuxt-calcom] Inline widget initialized successfully for:', calLink.value)
   } catch (error) {
-    console.error('[nuxt-calcom] Failed to initialize inline widget:', error)
-    if (error instanceof Error) {
-      console.error('[DEBUG] Error details:', error.message, error.stack)
-    } else {
-      console.error('[DEBUG] Error details:', String(error))
-    }
+    console.error('[nuxt-calcom] Error initializing inline widget:', error)
+    loadError.value = 'Failed to load Cal.com script.'
+    isLoading.value = false
   }
 }
 
-const destroyEmbed = () => {
-  if (containerRef.value && embedInitialized) {
-    // Clear the container content
-    containerRef.value.innerHTML = ''
-    embedInitialized = false
-    console.log('[nuxt-calcom] Inline widget destroyed')
-  }
-}
-
-onMounted(async () => {
-  console.log('[DEBUG] Component mounted, containerRef.value:', containerRef.value)
-  console.log('[DEBUG] Document ready state:', document.readyState)
-
-  // Wait for next tick to ensure DOM is fully rendered
-  await nextTick()
-
-  // Additional delay to ensure hydration is complete
-  setTimeout(() => {
-    console.log('[DEBUG] Starting initialization after mount delay')
-    initializeEmbed()
-  }, 150)
-})
-
-onUnmounted(() => {
-  destroyEmbed()
-})
+onMounted(initializeEmbed)
 </script>
 
 <style scoped>
-.cal-inline-widget {
-  min-height: 500px;
-  overflow: hidden;
-}
-
 .cal-loading-placeholder {
   display: flex;
   align-items: center;
