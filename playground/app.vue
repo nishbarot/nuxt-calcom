@@ -61,6 +61,7 @@
         </p>
         <ClientOnly fallback-tag="div" fallback="Loading inline widget...">
           <CalInlineWidget
+            :key="effectiveCalLink"
             :cal-link="effectiveCalLink"
             :height="500"
             style="border: 1px solid #ccc; border-radius: 8px; min-height: 500px"
@@ -74,6 +75,7 @@
         <p class="widget-description">Opens the calendar in a modal popup when clicked.</p>
         <ClientOnly fallback-tag="div" fallback="Loading popup button...">
           <CalPopupButton
+            :key="effectiveCalLink"
             :cal-link="effectiveCalLink"
             :text="`Book: ${effectiveCalLink}`"
             button-class="test-popup-button"
@@ -86,6 +88,7 @@
 
     <ClientOnly>
       <CalFloatingWidget
+        :key="effectiveCalLink"
         :cal-link="effectiveCalLink"
         :text="`Float: ${effectiveCalLink}`"
         position="bottom-right"

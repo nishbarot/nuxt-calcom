@@ -1,6 +1,6 @@
 <template>
   <ClientOnly>
-    <div :id="containerId" ref="containerRef" :style="containerStyle" />
+    <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
     <template #fallback>
       <div v-if="isLoading && !loadError" class="cal-loading-placeholder" :style="containerStyle">
         <div class="loading-content">
@@ -17,7 +17,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
-import { parseAndValidateCalLink } from '../utils/calLinkParser'
 import { useRuntimeConfig, useNuxtApp } from '#app'
 
 interface Props {
@@ -45,17 +44,6 @@ const loadError = ref<string | null>(null)
 // Generate a unique ID for the container
 const instanceId = Math.random().toString(36).substr(2, 9)
 const containerId = `cal-inline-${instanceId}`
-
-// Compute the cal link to use
-const calLink = computed(() => {
-  const calcomConfig = config.public.calcom as Record<string, unknown>
-  const rawLink = props.calLink || (calcomConfig?.defaultLink as string)
-  if (!rawLink) {
-    console.warn('[nuxt-calcom] No calLink provided; using fallback.')
-    return 'demo'
-  }
-  return parseAndValidateCalLink(rawLink, 'demo')
-})
 
 // Compute container styles
 const containerStyle = computed(() => ({
@@ -93,7 +81,7 @@ const initializeEmbed = async () => {
     if (window.Cal) {
       window.Cal('inline', {
         elementOrSelector: `#${containerId}`,
-        calLink: calLink.value,
+        calLink: props.calLink,
         config: computedUiOptions.value,
       })
       window.Cal('on', {
@@ -101,7 +89,7 @@ const initializeEmbed = async () => {
         callback: () => {
           isLoading.value = false
           loadError.value = null
-          console.log(`[nuxt-calcom] Inline widget is ready for: ${calLink.value}`)
+          console.log(`[nuxt-calcom] Inline widget is ready for: ${props.calLink}`)
         },
       })
       window.Cal('on', {
@@ -121,28 +109,7 @@ const initializeEmbed = async () => {
   }
 }
 
-const destroyEmbed = () => {
-  const element = document.getElementById(containerId)
-  if (element) {
-    element.innerHTML = ''
-  }
-  isEmbedInitialized = false
-  isLoading.value = true
-  loadError.value = null
-  console.log(`[nuxt-calcom] Inline widget destroyed for: ${calLink.value}`)
-}
-
-watch(calLink, (newLink, oldLink) => {
-  if (newLink !== oldLink) {
-    console.log(`[nuxt-calcom] calLink changed, reinitializing inline widget.`)
-    destroyEmbed()
-    // Use timeout to ensure DOM is updated before re-initializing
-    setTimeout(initializeEmbed, 50)
-  }
-})
-
 onMounted(initializeEmbed)
-onUnmounted(destroyEmbed)
 </script>
 
 <style scoped>

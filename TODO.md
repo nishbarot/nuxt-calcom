@@ -31,6 +31,17 @@ _No critical issues at the moment._
 
 ### 05/26/2025
 
+- ✅ **Fixed TypeScript Configuration Issues**: Resolved TypeScript errors in IDE and test environment by creating proper type declarations and separate test configuration.
+
+  - ✅ Created separate `tests/tsconfig.json` with proper vitest globals and Vue test utils types
+  - ✅ Added `tests/vue-shim.d.ts` for Vue single-file component support in TypeScript
+  - ✅ Created `runtime/types/index.ts` with proper Cal.com plugin type declarations
+  - ✅ Fixed `$calcom` plugin typing issues in components and composables
+  - ✅ Resolved "Module 'vitest' has no exported member" errors in test files
+  - ✅ Fixed "Property 'waitForCal' does not exist" errors in components
+  - ✅ All tests continue to pass (51/51) with proper TypeScript support
+  - ✅ Linting passes with no TypeScript errors, only minor warnings remain
+
 - ✅ **Fixed Cal.com Embed Widgets Not Working**: Identified and resolved an issue where the inline, popup, and floating widgets failed to load with user-provided Cal.com links. The root cause was a hardcoded `origin` parameter pointing to `app.cal.com` instead of the correct `cal.com` for public booking pages.
   - ✅ Updated the `origin` to `https://cal.com` in `runtime/plugin.ts`.
   - ✅ Corrected the `origin` in `runtime/components/CalInlineWidget.vue`.

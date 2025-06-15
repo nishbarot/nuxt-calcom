@@ -9,6 +9,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
 
   // Configure the Cal.com module
+  // @ts-expect-error calcom is a valid key that is added by the module
   calcom: {
     defaultLink: 'demo',
     defaultEmbed: 'inline',
@@ -19,6 +20,16 @@ export default defineNuxtConfig({
     hideEventTypeDetails: false,
     uiOptions: {
       layout: 'month_view',
+    },
+  },
+
+  // Allow Cal.com scripts and frames for security
+  routeRules: {
+    '/**': {
+      headers: {
+        'Content-Security-Policy':
+          "default-src * 'unsafe-inline' 'unsafe-eval'; script-src * 'unsafe-inline' 'unsafe-eval'; connect-src * 'unsafe-inline'; img-src * data: blob: 'unsafe-inline'; frame-src *; style-src * 'unsafe-inline';",
+      },
     },
   },
 })
