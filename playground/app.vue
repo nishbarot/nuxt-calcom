@@ -25,12 +25,11 @@
         <div class="input-help">
           <p><strong>Supported formats:</strong></p>
           <ul>
-            <li>Username only: <code>demo-user</code></li>
-            <li>Username with event: <code>demo-user/30min</code></li>
-            <li>Full URL: <code>https://cal.com/demo-user</code></li>
-            <li>Full URL with event: <code>https://cal.com/demo-user/30min</code></li>
+            <li><code>demo-user</code></li>
+            <li><strong>Username with event:</strong></li>
+            <li><code>demo-user/30min</code></li>
           </ul>
-          <p>
+          <p class="description">
             <em>The module automatically normalizes all formats to work with Cal.com widgets.</em>
           </p>
         </div>

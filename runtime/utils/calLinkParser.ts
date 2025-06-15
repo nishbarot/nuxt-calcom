@@ -120,7 +120,7 @@ export function validateCalLink(link: string): boolean {
 
   // Should not contain invalid characters for usernames
   // Cal.com usernames typically allow letters, numbers, hyphens, underscores, and forward slashes
-  const validPattern = /^[a-zA-Z0-9\-_/]+$/
+  const validPattern = /^[a-zA-Z0-9_/-]+$/
   if (!validPattern.test(trimmed)) {
     return false
   }

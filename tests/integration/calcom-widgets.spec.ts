@@ -86,6 +86,28 @@ test.describe('Cal.com Widgets Integration', () => {
         page.locator('.status-info').locator('code', { hasText: 'demo/consultation' })
       ).toBeVisible()
     })
+
+    test('should handle complex usernames in full URLs', async ({ page }) => {
+      // This tests a real-world case where usernames can have hyphens and random suffixes.
+      const complexUrl = 'https://cal.com/tanishq-barot-n3wisw/'
+      const expectedUsername = 'tanishq-barot-n3wisw'
+
+      await page.fill('#calLinkInput', complexUrl)
+
+      // Wait for the component to process the new link.
+      await page.waitForTimeout(500)
+
+      // Check if the UI correctly displays the normalized, extracted username.
+      await expect(
+        page.locator('.status-info').locator('code', { hasText: expectedUsername })
+      ).toBeVisible({ timeout: 10000 })
+
+      // Also, verify that the inline widget's iframe source has been updated correctly.
+      const inlineWidgetIframe = page.locator('main iframe').first()
+      await expect(inlineWidgetIframe).toHaveAttribute('src', new RegExp(expectedUsername), {
+        timeout: 10000,
+      })
+    })
   })
 
   test.describe('Popup Button', () => {
@@ -103,8 +125,9 @@ test.describe('Cal.com Widgets Integration', () => {
     })
 
     test('should open popup when clicked', async ({ page }) => {
-      // Best practice: Assert the initial state before the action.
-      // There should only be one iframe on the page initially (the inline one).
+      // Best practice: Wait for the inline widget to be ready before asserting iframe counts.
+      await expect(page.locator('.cal-inline-widget').first()).toBeVisible({ timeout: 20000 })
+      // Now assert the initial state.
       await expect(page.locator('iframe')).toHaveCount(1)
 
       const popupButton = page.locator('.test-popup-button')
@@ -147,7 +170,9 @@ test.describe('Cal.com Widgets Integration', () => {
     })
 
     test('should be clickable and open popup', async ({ page }) => {
-      // Best practice: Assert the initial state.
+      // Best practice: Wait for the inline widget to be ready before asserting iframe counts.
+      await expect(page.locator('.cal-inline-widget').first()).toBeVisible({ timeout: 20000 })
+      // Now assert the initial state.
       await expect(page.locator('iframe')).toHaveCount(1)
 
       const floatingButton = page.getByRole('button', { name: /Book my Cal/i })
