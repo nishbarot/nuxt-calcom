@@ -1,7 +1,7 @@
 export interface CalFunction {
-  (action: string, ...args: any[]): any
+  (action: string, ...args: unknown[]): unknown
   loaded?: boolean
-  ns?: Record<string, any>
+  ns?: Record<string, unknown>
   q?: unknown[]
   l?: (args: unknown[]) => void
 }
@@ -26,7 +26,7 @@ export interface CalFloatingWidgetProps {
   offset?: { x?: number; y?: number }
   isVisible?: boolean
   buttonClass?: string
-  buttonStyle?: Record<string, any>
+  buttonStyle?: Record<string, string | number>
   size?: 'small' | 'medium' | 'large' | 'xl' | 'custom'
   variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'custom'
   showText?: boolean
@@ -59,7 +59,7 @@ export interface CalFloatingWidgetProps {
   fontFamily?: string
   fontWeight?: string
   disableDefaultStyles?: boolean
-  uiOptions?: Record<string, any>
+  uiOptions?: Record<string, unknown>
 }
 
 export interface CalPopupButtonProps {
@@ -67,9 +67,17 @@ export interface CalPopupButtonProps {
   text?: string
   loadingText?: string
   buttonClass?: string
-  buttonStyle?: Record<string, any>
+  buttonStyle?: Record<string, string | number>
   size?: 'xs' | 'small' | 'medium' | 'large' | 'xl' | 'custom'
-  variant?: 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'outline' | 'ghost' | 'custom'
+  variant?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'warning'
+    | 'danger'
+    | 'outline'
+    | 'ghost'
+    | 'custom'
   shape?: 'square' | 'rounded' | 'pill' | 'custom'
   showText?: boolean
   hasIcon?: boolean
@@ -79,28 +87,9 @@ export interface CalPopupButtonProps {
   showRipple?: boolean
   fullWidth?: boolean
   // Enhanced customization options
-  customColors?: {
-    background?: string
-    hover?: string
-    active?: string
-    text?: string
-    border?: string
-    shadow?: string
-  }
-  customSizes?: {
-    padding?: string
-    fontSize?: string
-    iconSize?: string
-    minWidth?: string
-    height?: string
-  }
-  customAnimations?: {
-    duration?: string
-    easing?: string
-    hoverScale?: string
-    activeScale?: string
-    rippleColor?: string
-  }
+  customColors?: Record<string, string>
+  customSizes?: Record<string, string>
+  customAnimations?: Record<string, string>
   borderWidth?: string
   borderRadius?: string
   boxShadow?: string
@@ -109,14 +98,14 @@ export interface CalPopupButtonProps {
   letterSpacing?: string
   textTransform?: string
   disableDefaultStyles?: boolean
-  uiOptions?: Record<string, any>
+  uiOptions?: Record<string, unknown>
 }
 
 export interface CalInlineWidgetProps {
   calLink?: string
   uiOptions?: Record<string, unknown>
   containerClass?: string
-  containerStyle?: Record<string, unknown>
+  containerStyle?: Record<string, string | number>
   height?: string | number
   width?: string | number
   minHeight?: string | number
@@ -126,14 +115,14 @@ export interface CalInlineWidgetProps {
   showLoadingSpinner?: boolean
   showLoadingText?: boolean
   loadingClass?: string
-  loadingStyle?: Record<string, unknown>
+  loadingStyle?: Record<string, string | number>
   // Error customization
   errorTitle?: string
   showErrorIcon?: boolean
   showRetryButton?: boolean
   retryButtonText?: string
   errorClass?: string
-  errorStyle?: Record<string, unknown>
+  errorStyle?: Record<string, string | number>
   // Enhanced customization
   theme?: 'light' | 'dark' | 'auto' | 'custom'
   borderRadius?: string
@@ -141,27 +130,22 @@ export interface CalInlineWidgetProps {
   boxShadow?: string
   backgroundColor?: string
   // Custom colors for theming
-  customColors?: {
-    background?: string
-    border?: string
-    text?: string
-    accent?: string
-    loading?: string
-    error?: string
-  }
+  customColors?: Record<string, string>
   // Animation settings
-  customAnimations?: {
-    duration?: string
-    easing?: string
-  }
+  customAnimations?: Record<string, string>
   // Responsive settings
   responsive?: boolean
-  breakpoints?: {
-    mobile?: { width?: string; height?: string }
-    tablet?: { width?: string; height?: string }
-    desktop?: { width?: string; height?: string }
-  }
+  breakpoints?: Record<string, Record<string, string>>
   disableDefaultStyles?: boolean
+}
+
+export interface ModuleOptions {
+  calLink: string
+  defaultLink: string
+  theme?: 'light' | 'dark' | 'auto'
+  hideEventTypeDetails?: boolean
+  branding?: Record<string, unknown>
+  uiOptions?: Record<string, unknown>
 }
 
 export {}

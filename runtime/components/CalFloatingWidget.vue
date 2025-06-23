@@ -1,21 +1,31 @@
 <template>
   <Teleport to="body">
-    <button 
+    <button
+      v-show="isVisible"
       :class="computedClasses"
       :style="computedStyles"
       @click="openCalPopup"
-      v-show="isVisible"
       @mouseenter="isHovered = true"
       @mouseleave="isHovered = false"
     >
       <div class="fab-content">
         <div v-if="hasIcon" class="fab-icon">
           <slot name="icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M8 2v4"/>
-              <path d="M16 2v4"/>
-              <rect width="18" height="18" x="3" y="4" rx="2"/>
-              <path d="M3 10h18"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M8 2v4" />
+              <path d="M16 2v4" />
+              <rect width="18" height="18" x="3" y="4" rx="2" />
+              <path d="M3 10h18" />
             </svg>
           </slot>
         </div>
@@ -23,55 +33,56 @@
           <slot>{{ text || 'Schedule Meeting' }}</slot>
         </div>
       </div>
-      
+
       <!-- Ripple effect -->
-      <div v-if="showRipple" class="fab-ripple"></div>
+      <div v-if="showRipple" class="fab-ripple" />
     </button>
   </Teleport>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-// @ts-ignore
+import { ref, computed, onMounted } from 'vue'
 import { useNuxtApp } from '#app'
 
 const props = defineProps({
-  calLink: { type: String, required: false },
+  calLink: { type: String, default: undefined },
   text: { type: String, default: 'Schedule Meeting' },
-  position: { 
-    type: String, 
+  position: {
+    type: String,
     default: 'bottom-right',
-    validator: (value: string) => ['bottom-left', 'bottom-right', 'top-left', 'top-right', 'custom'].includes(value)
+    validator: (value: string) =>
+      ['bottom-left', 'bottom-right', 'top-left', 'top-right', 'custom'].includes(value),
   },
   offset: { type: Object, default: () => ({ x: 24, y: 24 }) },
   isVisible: { type: Boolean, default: true },
   buttonClass: { type: String, default: '' },
   buttonStyle: { type: Object, default: () => ({}) },
-  size: { 
-    type: String, 
+  size: {
+    type: String,
     default: 'large',
-    validator: (value: string) => ['small', 'medium', 'large', 'xl', 'custom'].includes(value)
+    validator: (value: string) => ['small', 'medium', 'large', 'xl', 'custom'].includes(value),
   },
-  variant: { 
-    type: String, 
+  variant: {
+    type: String,
     default: 'primary',
-    validator: (value: string) => ['primary', 'secondary', 'success', 'warning', 'custom'].includes(value)
+    validator: (value: string) =>
+      ['primary', 'secondary', 'success', 'warning', 'custom'].includes(value),
   },
   showText: { type: Boolean, default: true },
   hasIcon: { type: Boolean, default: true },
   pulse: { type: Boolean, default: true },
   showRipple: { type: Boolean, default: true },
-  customColors: { 
-    type: Object, 
-    default: () => ({}) // { background, hover, text, shadow }
+  customColors: {
+    type: Object,
+    default: () => ({}), // { background, hover, text, shadow }
   },
-  customSizes: { 
-    type: Object, 
-    default: () => ({}) // { width, height, fontSize, padding, iconSize }
+  customSizes: {
+    type: Object,
+    default: () => ({}), // { width, height, fontSize, padding, iconSize }
   },
-  customAnimations: { 
-    type: Object, 
-    default: () => ({}) // { duration, easing, pulseScale, rippleColor }
+  customAnimations: {
+    type: Object,
+    default: () => ({}), // { duration, easing, pulseScale, rippleColor }
   },
   zIndex: { type: [String, Number], default: 9999 },
   borderRadius: { type: String, default: '' },
@@ -79,7 +90,7 @@ const props = defineProps({
   fontFamily: { type: String, default: '' },
   fontWeight: { type: String, default: '' },
   disableDefaultStyles: { type: Boolean, default: false },
-  uiOptions: { type: Object, default: () => ({}) }
+  uiOptions: { type: Object, default: () => ({}) },
 })
 
 const nuxtApp = useNuxtApp()
@@ -87,72 +98,72 @@ const isHovered = ref(false)
 
 const computedClasses = computed(() => {
   const classes = ['cal-floating-widget']
-  
+
   if (!props.disableDefaultStyles) {
     // Position classes
     if (props.position !== 'custom') {
       const positionClasses = {
         'bottom-right': 'fab-bottom-right',
-        'bottom-left': 'fab-bottom-left', 
+        'bottom-left': 'fab-bottom-left',
         'top-right': 'fab-top-right',
-        'top-left': 'fab-top-left'
+        'top-left': 'fab-top-left',
       }
       classes.push(positionClasses[props.position as keyof typeof positionClasses])
     }
-    
+
     // Size classes
     if (props.size !== 'custom') {
       const sizeClasses = {
         small: 'fab-small',
-        medium: 'fab-medium', 
+        medium: 'fab-medium',
         large: 'fab-large',
-        xl: 'fab-xl'
+        xl: 'fab-xl',
       }
       classes.push(sizeClasses[props.size as keyof typeof sizeClasses])
     }
-    
+
     // Variant classes
     if (props.variant !== 'custom') {
       const variantClasses = {
         primary: 'fab-primary',
         secondary: 'fab-secondary',
         success: 'fab-success',
-        warning: 'fab-warning'
+        warning: 'fab-warning',
       }
       classes.push(variantClasses[props.variant as keyof typeof variantClasses])
     }
-    
+
     // State classes
     if (isHovered.value) {
       classes.push('fab-hovered')
     }
-    
+
     if (props.pulse) {
       classes.push('fab-pulse')
     }
-    
+
     if (props.showText && props.hasIcon) {
       classes.push('fab-extended')
     } else if (!props.showText) {
       classes.push('fab-icon-only')
     }
   }
-  
+
   // Always apply custom classes
   if (props.buttonClass) {
     classes.push(props.buttonClass)
   }
-  
+
   return classes.join(' ')
 })
 
 const computedStyles = computed(() => {
   const styles: Record<string, string | number> = {}
-  
+
   styles.position = 'fixed'
   styles.zIndex = props.zIndex.toString()
   styles.cursor = 'pointer'
-  
+
   if (props.position !== 'custom') {
     const { x = 24, y = 24 } = props.offset
     if (props.position.includes('right')) styles.right = `${x}px`
@@ -160,7 +171,7 @@ const computedStyles = computed(() => {
     if (props.position.includes('bottom')) styles.bottom = `${y}px`
     if (props.position.includes('top')) styles.top = `${y}px`
   }
-  
+
   if (props.customColors.background) {
     styles['--fab-bg'] = props.customColors.background
   }
@@ -173,7 +184,7 @@ const computedStyles = computed(() => {
   if (props.customColors.shadow) {
     styles['--fab-shadow'] = props.customColors.shadow
   }
-  
+
   if (props.customSizes.width) {
     styles['--fab-width'] = props.customSizes.width
   }
@@ -189,7 +200,7 @@ const computedStyles = computed(() => {
   if (props.customSizes.iconSize) {
     styles['--fab-icon-size'] = props.customSizes.iconSize
   }
-  
+
   if (props.customAnimations.duration) {
     styles['--fab-transition-duration'] = props.customAnimations.duration
   }
@@ -202,7 +213,7 @@ const computedStyles = computed(() => {
   if (props.customAnimations.rippleColor) {
     styles['--fab-ripple-color'] = props.customAnimations.rippleColor
   }
-  
+
   if (props.borderRadius) {
     styles.borderRadius = props.borderRadius
   }
@@ -215,34 +226,34 @@ const computedStyles = computed(() => {
   if (props.fontWeight) {
     styles.fontWeight = props.fontWeight
   }
-  
+
   return { ...styles, ...props.buttonStyle }
 })
 
 const openCalPopup = async () => {
   if (import.meta.server) return
-  
+
   if (!nuxtApp.$calcom) {
     console.error('[nuxt-calcom] Cal.com plugin not available.')
     return
   }
-  
+
   try {
     const Cal = await nuxtApp.$calcom.waitForCal()
-    
+
     const calcomConfig = nuxtApp.$config.public.calcom as { defaultLink?: string }
     const calLink = props.calLink || calcomConfig?.defaultLink
-    
+
     if (!calLink) {
       console.error('[nuxt-calcom] No cal-link provided and no defaultLink configured.')
       return
     }
-    
+
     Cal('modal', {
       calLink,
       config: {
-        ...props.uiOptions
-      }
+        ...props.uiOptions,
+      },
     })
   } catch (error) {
     console.error('[nuxt-calcom] Failed to open Cal.com popup:', error)
@@ -271,15 +282,22 @@ onMounted(() => {
   --fab-transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
   --fab-pulse-scale: 1.1;
   --fab-ripple-color: rgba(255, 255, 255, 0.3);
-  
+
   border: none;
   outline: none;
   user-select: none;
-  font-family: var(--fab-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-family: var(
+    --fab-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
   font-weight: var(--fab-font-weight, 600);
   font-size: var(--fab-font-size);
   color: var(--fab-text);
-  
+
   width: var(--fab-width);
   height: var(--fab-height);
   border-radius: var(--fab-border-radius);
@@ -287,19 +305,31 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  
+
   background: var(--fab-bg);
   box-shadow: var(--fab-shadow);
   backdrop-filter: blur(10px);
-  
+
   transition: all var(--fab-transition-duration) var(--fab-transition-easing);
   transform: translateZ(0);
 }
 
-.fab-bottom-right { bottom: 24px; right: 24px; }
-.fab-bottom-left { bottom: 24px; left: 24px; }
-.fab-top-right { top: 24px; right: 24px; }
-.fab-top-left { top: 24px; left: 24px; }
+.fab-bottom-right {
+  bottom: 24px;
+  right: 24px;
+}
+.fab-bottom-left {
+  bottom: 24px;
+  left: 24px;
+}
+.fab-top-right {
+  top: 24px;
+  right: 24px;
+}
+.fab-top-left {
+  top: 24px;
+  left: 24px;
+}
 
 .fab-small {
   --fab-width: 48px;
@@ -423,7 +453,8 @@ onMounted(() => {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     opacity: 0.3;
   }
@@ -474,15 +505,27 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .fab-bottom-right { bottom: 16px; right: 16px; }
-  .fab-bottom-left { bottom: 16px; left: 16px; }
-  .fab-top-right { top: 16px; right: 16px; }
-  .fab-top-left { top: 16px; left: 16px; }
-  
+  .fab-bottom-right {
+    bottom: 16px;
+    right: 16px;
+  }
+  .fab-bottom-left {
+    bottom: 16px;
+    left: 16px;
+  }
+  .fab-top-right {
+    top: 16px;
+    right: 16px;
+  }
+  .fab-top-left {
+    top: 16px;
+    left: 16px;
+  }
+
   .fab-extended {
     padding: 0 16px;
   }
-  
+
   .fab-text {
     font-size: 14px;
   }
@@ -502,7 +545,7 @@ onMounted(() => {
     animation: none;
     transition: none;
   }
-  
+
   .cal-floating-widget:hover {
     transform: none;
   }

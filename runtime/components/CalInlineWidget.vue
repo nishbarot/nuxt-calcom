@@ -2,9 +2,14 @@
   <div :class="['cal-inline-container', containerClass]" :style="computedStyles">
     <!-- This div is the target for the Cal.com embed -->
     <div :id="containerId" ref="containerRef" class="cal-inline-widget-embed" />
-    
+
     <!-- Loading State Overlay -->
-    <div v-if="isLoading" class="cal-state-overlay loading-overlay" :class="loadingClass" :style="loadingStyle">
+    <div
+      v-if="isLoading"
+      class="cal-state-overlay loading-overlay"
+      :class="loadingClass"
+      :style="loadingStyle"
+    >
       <div class="loading-content">
         <div v-if="showLoadingSpinner" class="loading-spinner">
           <slot name="loading-spinner">
@@ -18,16 +23,31 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Error State Overlay -->
-    <div v-if="loadError" class="cal-state-overlay error-overlay" :class="errorClass" :style="errorStyle">
+    <div
+      v-if="loadError"
+      class="cal-state-overlay error-overlay"
+      :class="errorClass"
+      :style="errorStyle"
+    >
       <div class="error-content">
         <div v-if="showErrorIcon" class="error-icon">
           <slot name="error-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <line x1="15" y1="9" x2="9" y2="15"/>
-              <line x1="9" y1="9" x2="15" y2="15"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
             </svg>
           </slot>
         </div>
@@ -35,7 +55,7 @@
           <slot name="error-text" :error="loadError">
             <h3>{{ errorTitle }}</h3>
             <p>{{ loadError }}</p>
-            <button v-if="showRetryButton" @click="retryLoad" class="retry-button">
+            <button v-if="showRetryButton" class="retry-button" @click="retryLoad">
               {{ retryButtonText }}
             </button>
           </slot>
@@ -47,11 +67,10 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
-// @ts-ignore
 import { useRuntimeConfig, useNuxtApp } from '#app'
 
 const props = defineProps({
-  calLink: { type: String, required: false },
+  calLink: { type: String, default: undefined },
   uiOptions: { type: Object, default: () => ({}) },
   containerClass: { type: String, default: '' },
   containerStyle: { type: Object, default: () => ({}) },
@@ -65,7 +84,7 @@ const props = defineProps({
   showLoadingText: { type: Boolean, default: true },
   loadingClass: { type: String, default: '' },
   loadingStyle: { type: Object, default: () => ({}) },
-  // Error customization  
+  // Error customization
   errorTitle: { type: String, default: 'Failed to Load Calendar' },
   showErrorIcon: { type: Boolean, default: true },
   showRetryButton: { type: Boolean, default: true },
@@ -76,7 +95,7 @@ const props = defineProps({
   theme: {
     type: String,
     default: 'auto',
-    validator: (value: string) => ['light', 'dark', 'auto', 'custom'].includes(value)
+    validator: (value: string) => ['light', 'dark', 'auto', 'custom'].includes(value),
   },
   borderRadius: { type: String, default: '' },
   border: { type: String, default: '' },
@@ -85,12 +104,12 @@ const props = defineProps({
   // Custom colors for theming
   customColors: {
     type: Object,
-    default: () => ({}) // { background, border, text, accent, loading, error }
+    default: () => ({}), // { background, border, text, accent, loading, error }
   },
   // Animation settings
   customAnimations: {
     type: Object,
-    default: () => ({}) // { fadeIn, slideIn, duration, easing }
+    default: () => ({}), // { fadeIn, slideIn, duration, easing }
   },
   // Responsive settings
   responsive: { type: Boolean, default: true },
@@ -99,10 +118,10 @@ const props = defineProps({
     default: () => ({
       mobile: { width: '100%', height: '500px' },
       tablet: { width: '100%', height: '600px' },
-      desktop: { width: '100%', height: '630px' }
-    })
+      desktop: { width: '100%', height: '630px' },
+    }),
   },
-  disableDefaultStyles: { type: Boolean, default: false }
+  disableDefaultStyles: { type: Boolean, default: false },
 })
 
 const config = useRuntimeConfig()
@@ -114,66 +133,41 @@ const loadError = ref<string | null>(null)
 const instanceId = `cal-inline-${Math.random().toString(36).substr(2, 9)}`
 const containerId = ref(instanceId)
 
-let isEmbedInitialized = false
-
-// Computed classes
-const computedClasses = computed(() => {
-  const classes = ['cal-inline-widget']
-  
-  if (!props.disableDefaultStyles) {
-    if (props.theme !== 'custom') classes.push(`theme-${props.theme}`)
-    if (props.responsive) classes.push('responsive')
-    if (isLoading.value) classes.push('is-loading')
-    if (loadError.value) classes.push('has-error')
-  }
-  
-  if (props.containerClass) classes.push(props.containerClass)
-  
-  return classes.join(' ')
-})
-
-const loadingClasses = computed(() => {
-  const classes = ['cal-loading-placeholder']
-  if (props.loadingClass) classes.push(props.loadingClass)
-  return classes.join(' ')
-})
-
-const errorClasses = computed(() => {
-  const classes = ['cal-error-placeholder']
-  if (props.errorClass) classes.push(props.errorClass)
-  return classes.join(' ')
-})
+const isEmbedInitialized = false
 
 // Computed styles
 const computedStyles = computed(() => {
   const styles: Record<string, string> = {}
-  
+
   styles.height = typeof props.height === 'number' ? `${props.height}px` : props.height
   styles.width = typeof props.width === 'number' ? `${props.width}px` : props.width
-  
-  if (props.minHeight) styles.minHeight = typeof props.minHeight === 'number' ? `${props.minHeight}px` : props.minHeight
-  if (props.maxHeight) styles.maxHeight = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
-  
+
+  if (props.minHeight)
+    styles.minHeight =
+      typeof props.minHeight === 'number' ? `${props.minHeight}px` : props.minHeight
+  if (props.maxHeight)
+    styles.maxHeight =
+      typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
+
   if (props.borderRadius) styles.borderRadius = props.borderRadius
   if (props.border) styles.border = props.border
   if (props.boxShadow) styles.boxShadow = props.boxShadow
   if (props.backgroundColor) styles.backgroundColor = props.backgroundColor
-  
+
   if (props.customColors.background) styles['--cal-bg'] = props.customColors.background
   if (props.customColors.border) styles['--cal-border'] = props.customColors.border
   if (props.customColors.text) styles['--cal-text'] = props.customColors.text
   if (props.customColors.accent) styles['--cal-accent'] = props.customColors.accent
   if (props.customColors.loading) styles['--cal-loading'] = props.customColors.loading
   if (props.customColors.error) styles['--cal-error'] = props.customColors.error
-  
-  if (props.customAnimations.duration) styles['--cal-animation-duration'] = props.customAnimations.duration
-  if (props.customAnimations.easing) styles['--cal-animation-easing'] = props.customAnimations.easing
-  
+
+  if (props.customAnimations.duration)
+    styles['--cal-animation-duration'] = props.customAnimations.duration
+  if (props.customAnimations.easing)
+    styles['--cal-animation-easing'] = props.customAnimations.easing
+
   return { ...styles, ...props.containerStyle }
 })
-
-const loadingStyles = computed(() => ({ ...computedStyles.value, ...props.loadingStyle }))
-const errorStyles = computed(() => ({ ...computedStyles.value, ...props.errorStyle }))
 
 const computedUiOptions = computed(() => {
   const calcomConfig = config.public.calcom as Record<string, unknown>
@@ -196,7 +190,7 @@ const initializeEmbed = async () => {
 
   isLoading.value = true
   loadError.value = null
-  
+
   await nextTick()
   const element = document.getElementById(containerId.value)
   if (!element) {
@@ -210,19 +204,19 @@ const initializeEmbed = async () => {
 
     // Clean up any previous embed in this container
     element.innerHTML = ''
-    
+
     Cal('on', {
       action: 'linkReady',
       callback: () => {
         isLoading.value = false
         loadError.value = null
-      }
+      },
     })
 
     Cal('inline', {
       elementOrSelector: `#${containerId.value}`,
       calLink: effectiveCalLink.value,
-      config: computedUiOptions.value
+      config: computedUiOptions.value,
     })
   } catch (error) {
     isLoading.value = false
@@ -268,7 +262,7 @@ onUnmounted(() => {
   --cal-error: #ef4444;
   --cal-animation-duration: 0.3s;
   --cal-animation-easing: ease-in-out;
-  
+
   background-color: var(--cal-bg);
   border: 1px solid var(--cal-border);
   border-radius: 0.5rem;
@@ -305,7 +299,8 @@ onUnmounted(() => {
   border: 2px solid var(--cal-error);
 }
 
-.loading-content, .error-content {
+.loading-content,
+.error-content {
   text-align: center;
   padding: 2rem;
   max-width: 400px;
@@ -375,17 +370,26 @@ onUnmounted(() => {
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cal-state-overlay, .default-spinner {
+  .cal-state-overlay,
+  .default-spinner {
     animation: none;
     transition: none;
   }
@@ -460,7 +464,8 @@ onUnmounted(() => {
 
 /* Accessibility improvements */
 @media (prefers-reduced-motion: reduce) {
-  .cal-state-overlay, .default-spinner {
+  .cal-state-overlay,
+  .default-spinner {
     animation: none;
     transition: none;
   }
@@ -475,4 +480,3 @@ onUnmounted(() => {
   }
 }
 </style>
-

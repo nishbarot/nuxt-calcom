@@ -1,46 +1,6 @@
-import {
-  defineNuxtModule,
-  createResolver,
-  addPlugin,
-  addImportsDir,
-  addComponent,
-} from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addPlugin, addComponent, addImports } from '@nuxt/kit'
 import { defu } from 'defu'
-
-export interface ModuleOptions {
-  /**
-   * Default Cal.com link (e.g., 'username/meeting-type')
-   */
-  defaultLink?: string
-  /**
-   * Default embed type
-   */
-  defaultEmbed?: 'inline' | 'popup' | 'floating'
-  /**
-   * Theme configuration
-   */
-  theme?: 'light' | 'dark' | 'auto'
-  /**
-   * Branding options
-   */
-  branding?: {
-    brandColor?: string
-    darkBrandColor?: string
-  }
-  /**
-   * Hide event type details
-   */
-  hideEventTypeDetails?: boolean
-  /**
-   * UI options for Cal.com embed
-   */
-  uiOptions?: {
-    layout?: 'month_view' | 'week_view' | 'column_view'
-    styles?: Record<string, any>
-    hideEventTypeDetails?: boolean
-    [key: string]: any
-  }
-}
+import type { ModuleOptions } from './../runtime/types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
@@ -51,41 +11,47 @@ export default defineNuxtModule<ModuleOptions>({
     },
   },
   defaults: {
-    defaultEmbed: 'inline',
+    calLink: 'demo',
+    defaultLink: 'demo',
     theme: 'light',
     hideEventTypeDetails: false,
     uiOptions: {},
   },
   setup(options, nuxt) {
-    const { resolve } = createResolver(import.meta.url)
+    const resolver = createResolver(import.meta.url)
 
-    // Register composables for auto-import
-    addImportsDir(resolve('../runtime/composables'))
+    const moduleOptions = defu(nuxt.options.runtimeConfig.public.calcom as ModuleOptions, options)
 
-    // Add the plugin to inject Cal.com embed script
-    addPlugin(resolve('../runtime/plugin'))
+    nuxt.options.runtimeConfig.public.calcom = moduleOptions
 
-    // Auto-importing components
-    addComponent({
-      name: 'CalInlineWidget',
-      export: 'default',
-      filePath: resolve('../runtime/components/CalInlineWidget.vue'),
-    })
-    addComponent({
-      name: 'CalPopupButton',
-      export: 'default',
-      filePath: resolve('../runtime/components/CalPopupButton.vue'),
-    })
+    addPlugin(resolver.resolve('./runtime/plugin'))
+
     addComponent({
       name: 'CalFloatingWidget',
       export: 'default',
-      filePath: resolve('../runtime/components/CalFloatingWidget.vue'),
+      filePath: resolver.resolve('./runtime/components/CalFloatingWidget.vue'),
     })
 
-    // Make module options available at runtime
-    nuxt.options.runtimeConfig.public.calcom = defu(
-      nuxt.options.runtimeConfig.public.calcom || {},
-      options,
-    )
+    addComponent({
+      name: 'CalInlineWidget',
+      export: 'default',
+      filePath: resolver.resolve('./runtime/components/CalInlineWidget.vue'),
+    })
+
+    addComponent({
+      name: 'CalPopupButton',
+      export: 'default',
+      filePath: resolver.resolve('./runtime/components/CalPopupButton.vue'),
+    })
+
+    addImports({
+      name: 'useCalcom',
+      from: resolver.resolve('./runtime/composables/useCalcom'),
+    })
+
+    addImports({
+      name: 'useCalcomEventListener',
+      from: resolver.resolve('./runtime/composables/useCalcomEventListener'),
+    })
   },
 })

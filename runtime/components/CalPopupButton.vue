@@ -1,7 +1,8 @@
 <template>
-    <button
+  <button
     :class="computedClasses"
     :style="computedStyles"
+    :disabled="disabled || loading"
     @click="openCalPopup"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
@@ -9,76 +10,109 @@
     <div class="button-content">
       <div v-if="hasIcon" class="button-icon">
         <slot name="icon">
-          <svg v-if="loading" class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 12a9 9 0 11-6.219-8.56"/>
+          <svg
+            v-if="loading"
+            class="animate-spin"
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12a9 9 0 11-6.219-8.56" />
           </svg>
-          <svg v-else xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 2v4"/>
-            <path d="M16 2v4"/>
-            <rect width="18" height="18" x="3" y="4" rx="2"/>
-            <path d="M3 10h18"/>
+          <svg
+            v-else
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
           </svg>
         </slot>
       </div>
       <div v-if="showText" class="button-text">
-        <slot>{{ loading ? (loadingText || 'Opening...') : text }}</slot>
+        <slot>{{ loading ? loadingText || 'Opening...' : text }}</slot>
       </div>
     </div>
-    
+
     <!-- Ripple effect -->
-    <div v-if="showRipple" class="button-ripple"></div>
-      </button>
+    <div v-if="showRipple" class="button-ripple" />
+  </button>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-// @ts-ignore
 import { useNuxtApp } from '#app'
 
 const props = defineProps({
-  calLink: { type: String, required: false },
+  calLink: { type: String, default: undefined },
   text: { type: String, default: 'Schedule Meeting' },
   loadingText: { type: String, default: 'Opening...' },
   buttonClass: { type: String, default: '' },
   buttonStyle: { type: Object, default: () => ({}) },
-  size: { 
-    type: String, 
+  size: {
+    type: String,
     default: 'medium',
-    validator: (value: string) => ['xs', 'small', 'medium', 'large', 'xl', 'custom'].includes(value)
+    validator: (value: string) =>
+      ['xs', 'small', 'medium', 'large', 'xl', 'custom'].includes(value),
   },
-  variant: { 
-    type: String, 
+  variant: {
+    type: String,
     default: 'primary',
-    validator: (value: string) => ['primary', 'secondary', 'success', 'warning', 'danger', 'outline', 'ghost', 'custom'].includes(value)
+    validator: (value: string) =>
+      [
+        'primary',
+        'secondary',
+        'success',
+        'warning',
+        'danger',
+        'outline',
+        'ghost',
+        'custom',
+      ].includes(value),
   },
   shape: {
     type: String,
     default: 'rounded',
-    validator: (value: string) => ['square', 'rounded', 'pill', 'custom'].includes(value)
+    validator: (value: string) => ['square', 'rounded', 'pill', 'custom'].includes(value),
   },
   showText: { type: Boolean, default: true },
   hasIcon: { type: Boolean, default: false },
   iconPosition: {
     type: String,
     default: 'left',
-    validator: (value: string) => ['left', 'right', 'top', 'bottom'].includes(value)
+    validator: (value: string) => ['left', 'right', 'top', 'bottom'].includes(value),
   },
   loading: { type: Boolean, default: false },
   disabled: { type: Boolean, default: false },
   showRipple: { type: Boolean, default: true },
   fullWidth: { type: Boolean, default: false },
   // Enhanced customization props
-  customColors: { 
-    type: Object, 
-    default: () => ({}) // { background, hover, active, text, border, shadow }
+  customColors: {
+    type: Object,
+    default: () => ({}), // { background, hover, active, text, border, shadow }
   },
-  customSizes: { 
-    type: Object, 
-    default: () => ({}) // { padding, fontSize, iconSize, minWidth, height }
+  customSizes: {
+    type: Object,
+    default: () => ({}), // { padding, fontSize, iconSize, minWidth, height }
   },
-  customAnimations: { 
-    type: Object, 
-    default: () => ({}) // { duration, easing, hoverScale, activeScale, rippleColor }
+  customAnimations: {
+    type: Object,
+    default: () => ({}), // { duration, easing, hoverScale, activeScale, rippleColor }
   },
   borderWidth: { type: String, default: '' },
   borderRadius: { type: String, default: '' },
@@ -88,7 +122,7 @@ const props = defineProps({
   letterSpacing: { type: String, default: '' },
   textTransform: { type: String, default: '' },
   disableDefaultStyles: { type: Boolean, default: false },
-  uiOptions: { type: Object, default: () => ({}) }
+  uiOptions: { type: Object, default: () => ({}) },
 })
 
 const nuxtApp = useNuxtApp()
@@ -97,7 +131,7 @@ const isLoading = ref(false)
 
 const computedClasses = computed(() => {
   const classes = ['cal-popup-button']
-  
+
   // Only apply preset classes if not using custom styling
   if (!props.disableDefaultStyles) {
     // Size classes
@@ -105,13 +139,13 @@ const computedClasses = computed(() => {
       const sizeClasses = {
         xs: 'btn-xs',
         small: 'btn-small',
-        medium: 'btn-medium', 
+        medium: 'btn-medium',
         large: 'btn-large',
-        xl: 'btn-xl'
+        xl: 'btn-xl',
       }
       classes.push(sizeClasses[props.size as keyof typeof sizeClasses])
     }
-    
+
     // Variant classes
     if (props.variant !== 'custom') {
       const variantClasses = {
@@ -121,38 +155,38 @@ const computedClasses = computed(() => {
         warning: 'btn-warning',
         danger: 'btn-danger',
         outline: 'btn-outline',
-        ghost: 'btn-ghost'
+        ghost: 'btn-ghost',
       }
       classes.push(variantClasses[props.variant as keyof typeof variantClasses])
     }
-    
+
     // Shape classes
     if (props.shape !== 'custom') {
       const shapeClasses = {
         square: 'btn-square',
         rounded: 'btn-rounded',
-        pill: 'btn-pill'
+        pill: 'btn-pill',
       }
       classes.push(shapeClasses[props.shape as keyof typeof shapeClasses])
     }
-    
+
     // State classes
     if (isHovered.value) {
       classes.push('btn-hovered')
     }
-    
+
     if (props.loading || isLoading.value) {
       classes.push('btn-loading')
     }
-    
+
     if (props.disabled) {
       classes.push('btn-disabled')
     }
-    
+
     if (props.fullWidth) {
       classes.push('btn-full-width')
     }
-    
+
     // Icon position classes
     if (props.hasIcon && props.showText) {
       classes.push(`btn-icon-${props.iconPosition}`)
@@ -160,18 +194,18 @@ const computedClasses = computed(() => {
       classes.push('btn-icon-only')
     }
   }
-  
+
   // Always apply custom classes
   if (props.buttonClass) {
     classes.push(props.buttonClass)
   }
-  
+
   return classes.join(' ')
 })
 
 const computedStyles = computed(() => {
   const styles: Record<string, string | number> = {}
-  
+
   // Custom styling overrides
   if (props.customColors.background) {
     styles['--btn-bg'] = props.customColors.background
@@ -191,7 +225,7 @@ const computedStyles = computed(() => {
   if (props.customColors.shadow) {
     styles['--btn-shadow'] = props.customColors.shadow
   }
-  
+
   if (props.customSizes.padding) {
     styles['--btn-padding'] = props.customSizes.padding
   }
@@ -207,7 +241,7 @@ const computedStyles = computed(() => {
   if (props.customSizes.height) {
     styles['--btn-height'] = props.customSizes.height
   }
-  
+
   if (props.customAnimations.duration) {
     styles['--btn-transition-duration'] = props.customAnimations.duration
   }
@@ -223,7 +257,7 @@ const computedStyles = computed(() => {
   if (props.customAnimations.rippleColor) {
     styles['--btn-ripple-color'] = props.customAnimations.rippleColor
   }
-  
+
   // Direct style overrides
   if (props.borderWidth) {
     styles.borderWidth = props.borderWidth
@@ -246,46 +280,51 @@ const computedStyles = computed(() => {
   if (props.textTransform) {
     styles.textTransform = props.textTransform
   }
-  
+
   // Merge with user-provided styles (highest priority)
   return { ...styles, ...props.buttonStyle }
 })
 
-const openCalPopup = async () => {
+const openCalPopup = () => {
   if (import.meta.server || props.disabled || props.loading || isLoading.value) return
-  
+
   if (!nuxtApp.$calcom) {
     console.error('[nuxt-calcom] Cal.com plugin not available.')
     return
   }
-  
-  try {
-    isLoading.value = true
-    const Cal = await nuxtApp.$calcom.waitForCal()
-    
-    const calcomConfig = nuxtApp.$config.public.calcom as { defaultLink?: string }
-    const calLink = props.calLink || calcomConfig?.defaultLink
-    
-    if (!calLink) {
-      console.error('[nuxt-calcom] No cal-link provided and no defaultLink configured.')
-      return
-    }
-    
-    Cal('modal', {
-      calLink,
-      config: {
-        ...props.uiOptions
+
+  isLoading.value = true
+
+  nuxtApp.$calcom
+    .waitForCal()
+    .then(Cal => {
+      const calcomConfig = nuxtApp.$config.public.calcom as { defaultLink?: string }
+      const calLink = props.calLink || calcomConfig?.defaultLink
+
+      if (!calLink) {
+        console.error('[nuxt-calcom] No cal-link provided and no defaultLink configured.')
+        isLoading.value = false
+        return
       }
+
+      Cal('modal', {
+        calLink,
+        config: { ...props.uiOptions },
+      })
+
+      setTimeout(() => {
+        isLoading.value = false
+      }, 500)
     })
-  } catch (error) {
-    console.error('[nuxt-calcom] Failed to open Cal.com popup:', error)
-  } finally {
-    // Reset loading state after a short delay
-    setTimeout(() => {
+    .catch(error => {
+      console.error('[nuxt-calcom] Failed to open Cal.com popup:', error)
       isLoading.value = false
-    }, 500)
-  }
+    })
 }
+
+defineExpose({
+  openCalPopup,
+})
 </script>
 
 <style scoped>
@@ -310,7 +349,7 @@ const openCalPopup = async () => {
   --btn-hover-scale: 1.02;
   --btn-active-scale: 0.98;
   --btn-ripple-color: rgba(255, 255, 255, 0.3);
-  
+
   /* Base button styles using custom properties */
   position: relative;
   display: inline-flex;
@@ -320,7 +359,14 @@ const openCalPopup = async () => {
   min-width: var(--btn-min-width);
   height: var(--btn-height);
   padding: var(--btn-padding);
-  font-family: var(--btn-font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+  font-family: var(
+    --btn-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
   font-size: var(--btn-font-size);
   font-weight: var(--btn-font-weight, 500);
   line-height: 1.5;
@@ -580,7 +626,7 @@ const openCalPopup = async () => {
     animation: none;
     transition: none;
   }
-  
+
   .cal-popup-button:hover {
     transform: none;
   }

@@ -55,7 +55,9 @@
       <!-- CalPopupButton Examples -->
       <section class="widget-test-card">
         <h2>🎯 Popup Button</h2>
-        <p class="widget-description">Opens the calendar in a modal popup when clicked. Fully customizable.</p>
+        <p class="widget-description">
+          Opens the calendar in a modal popup when clicked. Fully customizable.
+        </p>
         <div class="button-showcase">
           <!-- Default Button -->
           <div class="button-demo">
@@ -71,11 +73,21 @@
                 :show-ripple="true"
               >
                 <template #icon>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M8 2v4"/>
-                    <path d="M16 2v4"/>
-                    <rect width="18" height="18" x="3" y="4" rx="2"/>
-                    <path d="M3 10h18"/>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M8 2v4" />
+                    <path d="M16 2v4" />
+                    <rect width="18" height="18" x="3" y="4" rx="2" />
+                    <path d="M3 10h18" />
                   </svg>
                 </template>
               </CalPopupButton>
@@ -86,13 +98,48 @@
           <div class="button-demo">
             <h3>Different Variants</h3>
             <div class="button-grid">
-              <CalPopupButton :cal-link="effectiveCalLink" text="Primary" variant="primary" size="small" />
-              <CalPopupButton :cal-link="effectiveCalLink" text="Secondary" variant="secondary" size="small" />
-              <CalPopupButton :cal-link="effectiveCalLink" text="Success" variant="success" size="small" />
-              <CalPopupButton :cal-link="effectiveCalLink" text="Warning" variant="warning" size="small" />
-              <CalPopupButton :cal-link="effectiveCalLink" text="Danger" variant="danger" size="small" />
-              <CalPopupButton :cal-link="effectiveCalLink" text="Outline" variant="outline" size="small" />
-              <CalPopupButton :cal-link="effectiveCalLink" text="Ghost" variant="ghost" size="small" />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Primary"
+                variant="primary"
+                size="small"
+              />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Secondary"
+                variant="secondary"
+                size="small"
+              />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Success"
+                variant="success"
+                size="small"
+              />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Warning"
+                variant="warning"
+                size="small"
+              />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Danger"
+                variant="danger"
+                size="small"
+              />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Outline"
+                variant="outline"
+                size="small"
+              />
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Ghost"
+                variant="ghost"
+                size="small"
+              />
             </div>
           </div>
 
@@ -136,20 +183,20 @@
                 hover: 'linear-gradient(45deg, #764ba2 0%, #667eea 100%)',
                 active: 'linear-gradient(45deg, #5a67d8 0%, #553c9a 100%)',
                 text: '#ffffff',
-                shadow: '0 10px 25px rgba(102, 126, 234, 0.4)'
+                shadow: '0 10px 25px rgba(102, 126, 234, 0.4)',
               }"
               :custom-sizes="{
                 padding: '1rem 2rem',
                 fontSize: '1.1rem',
                 iconSize: '1.5rem',
-                height: '3.5rem'
+                height: '3.5rem',
               }"
               :custom-animations="{
                 duration: '0.3s',
                 easing: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                 hoverScale: '1.05',
                 activeScale: '0.95',
-                rippleColor: 'rgba(255, 255, 255, 0.4)'
+                rippleColor: 'rgba(255, 255, 255, 0.4)',
               }"
               border-radius="1rem"
               font-family="'Georgia', serif"
@@ -157,8 +204,18 @@
               letter-spacing="0.05em"
             >
               <template #icon>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
                 </svg>
               </template>
             </CalPopupButton>
@@ -168,29 +225,29 @@
           <div class="button-demo">
             <h3>Special States</h3>
             <div class="button-grid">
-              <CalPopupButton 
-                :cal-link="effectiveCalLink" 
-                :has-icon="true" 
-                :show-text="false" 
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                :has-icon="true"
+                :show-text="false"
                 variant="primary"
                 title="Icon Only"
               />
-              <CalPopupButton 
-                :cal-link="effectiveCalLink" 
-                text="Loading..." 
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Loading..."
                 :loading="true"
                 :has-icon="true"
                 variant="secondary"
               />
-              <CalPopupButton 
-                :cal-link="effectiveCalLink" 
-                text="Disabled" 
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Disabled"
                 :disabled="true"
                 variant="outline"
               />
-              <CalPopupButton 
-                :cal-link="effectiveCalLink" 
-                text="Full Width" 
+              <CalPopupButton
+                :cal-link="effectiveCalLink"
+                text="Full Width"
                 :full-width="true"
                 variant="success"
               />
@@ -238,11 +295,21 @@
         :show-ripple="true"
       >
         <template #icon>
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 2v4"/>
-            <path d="M16 2v4"/>
-            <rect width="18" height="18" x="3" y="4" rx="2"/>
-            <path d="M3 10h18"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M8 2v4" />
+            <path d="M16 2v4" />
+            <rect width="18" height="18" x="3" y="4" rx="2" />
+            <path d="M3 10h18" />
           </svg>
         </template>
       </CalFloatingWidget>
@@ -263,20 +330,20 @@
           background: 'linear-gradient(45deg, #ff6b6b, #ee5a24)',
           hover: 'linear-gradient(45deg, #ee5a24, #d63031)',
           text: '#ffffff',
-          shadow: '0 8px 32px rgba(255, 107, 107, 0.4)'
+          shadow: '0 8px 32px rgba(255, 107, 107, 0.4)',
         }"
         :custom-sizes="{
           width: '80px',
           height: '80px',
           fontSize: '14px',
           padding: '0 20px',
-          iconSize: '28px'
+          iconSize: '28px',
         }"
         :custom-animations="{
           duration: '0.4s',
           easing: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
           pulseScale: '1.15',
-          rippleColor: 'rgba(255, 255, 255, 0.5)'
+          rippleColor: 'rgba(255, 255, 255, 0.5)',
         }"
         border-radius="20px"
         font-family="'Comic Sans MS', cursive"
@@ -284,8 +351,20 @@
         :z-index="10000"
       >
         <template #icon>
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="28"
+            height="28"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            />
           </svg>
         </template>
       </CalFloatingWidget>
@@ -336,7 +415,12 @@ const activeWidgetProps = computed(() => {
         calLink,
         theme: 'dark',
         height: 500,
-        customColors: { background: '#111827', border: '#374151', text: '#f9fafb', accent: '#3b82f6' }
+        customColors: {
+          background: '#111827',
+          border: '#374151',
+          text: '#f9fafb',
+          accent: '#3b82f6',
+        },
       }
     case 'styled':
       return {
@@ -345,8 +429,12 @@ const activeWidgetProps = computed(() => {
         height: 600,
         borderRadius: '1rem',
         boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-        customColors: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: '#8b5cf6', accent: '#f59e0b' },
-        customAnimations: { duration: '0.5s', easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }
+        customColors: {
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          border: '#8b5cf6',
+          accent: '#f59e0b',
+        },
+        customAnimations: { duration: '0.5s', easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
       }
     case 'compact':
       return {
@@ -355,7 +443,7 @@ const activeWidgetProps = computed(() => {
         height: 400,
         responsive: true,
         borderRadius: '0.75rem',
-        customColors: { accent: '#10b981' }
+        customColors: { accent: '#10b981' },
       }
     case 'error':
       return {
@@ -367,16 +455,21 @@ const activeWidgetProps = computed(() => {
         retryButtonText: '🔄 Try Again',
         customColors: { loading: '#6366f1', error: '#ef4444', accent: '#8b5cf6' },
         loadingClass: 'custom-loading',
-        errorClass: 'custom-error'
+        errorClass: 'custom-error',
       }
     case 'slots':
-       return {
+      return {
         key,
         calLink,
         height: 500,
         disableDefaultStyles: true,
         containerClass: 'custom-minimal-widget',
-        containerStyle: { background: 'white', border: '2px solid #e5e7eb', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }
+        containerStyle: {
+          background: 'white',
+          border: '2px solid #e5e7eb',
+          borderRadius: '12px',
+          boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+        },
       }
     default: // 'default'
       return { key, calLink, height: 500 }
@@ -744,7 +837,9 @@ onMounted(() => {
 
 .custom-minimal-widget:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  box-shadow:
+    0 10px 25px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
 }
 
 .custom-spinner {
@@ -753,7 +848,11 @@ onMounted(() => {
 }
 
 @keyframes bounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateY(0);
   }
   40% {
