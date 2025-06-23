@@ -14,7 +14,7 @@ export default defineBuildConfig({
     // process it, and output it to `dist/runtime`.
     {
       builder: 'mkdist',
-      input: './runtime/',
+      input: './src/runtime/',
       outDir: './dist/runtime',
     },
   ],
