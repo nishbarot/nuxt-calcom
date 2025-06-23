@@ -13,7 +13,7 @@
     "dist/"
   ],
   "scripts": {
-    "build": "nuxt-module-build build && cp -r runtime dist/runtime",
+    "build": "nuxt-module-build build && rm -rf dist/runtime && cp -r runtime dist/runtime",
     "dev": "nuxt-module-build build --stub && nuxt dev playground",
     "dev:build": "nuxt-module-build build --stub",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxt prepare playground",
