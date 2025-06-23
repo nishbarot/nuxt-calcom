@@ -24,34 +24,34 @@ export default defineNuxtModule<ModuleOptions>({
 
     nuxt.options.runtimeConfig.public.calcom = moduleOptions
 
-    addPlugin(resolver.resolve('./runtime/plugin'))
+    addPlugin(resolver.resolve('../runtime/plugin'))
 
     addComponent({
       name: 'CalFloatingWidget',
       export: 'default',
-      filePath: resolver.resolve('./runtime/components/CalFloatingWidget.vue'),
+      filePath: resolver.resolve('../runtime/components/CalFloatingWidget.vue'),
     })
 
     addComponent({
       name: 'CalInlineWidget',
       export: 'default',
-      filePath: resolver.resolve('./runtime/components/CalInlineWidget.vue'),
+      filePath: resolver.resolve('../runtime/components/CalInlineWidget.vue'),
     })
 
     addComponent({
       name: 'CalPopupButton',
       export: 'default',
-      filePath: resolver.resolve('./runtime/components/CalPopupButton.vue'),
+      filePath: resolver.resolve('../runtime/components/CalPopupButton.vue'),
     })
 
     addImports({
       name: 'useCalcom',
-      from: resolver.resolve('./runtime/composables/useCalcom'),
+      from: resolver.resolve('../runtime/composables/useCalcom'),
     })
 
     addImports({
       name: 'useCalcomEventListener',
-      from: resolver.resolve('./runtime/composables/useCalcomEventListener'),
+      from: resolver.resolve('../runtime/composables/useCalcomEventListener'),
     })
   },
 })

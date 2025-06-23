@@ -15,8 +15,8 @@ export default defineBuildConfig({
     {
       builder: 'mkdist',
       input: './runtime/',
-      outDir: './dist/runtime'
-    }
+      outDir: './dist/runtime',
+    },
   ],
 
   // Common externals for Nuxt modules
@@ -26,7 +26,7 @@ export default defineBuildConfig({
     '@nuxt/schema',
     // Add any other dependencies that shouldn't be bundled
   ],
-  
+
   rollup: {
     // Emits CommonJS output for compatibility
     emitCJS: true,

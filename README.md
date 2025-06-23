@@ -67,6 +67,7 @@ Embed widgets anywhere. They are fully customizable, but work great out of the b
 
 **Inline Widget:**
 Embeds a calendar directly in the page.
+
 ```vue
 <template>
   <CalInlineWidget cal-link="your-username/30min" theme="dark" />
@@ -75,6 +76,7 @@ Embeds a calendar directly in the page.
 
 **Popup Button:**
 A versatile button that opens the calendar in a modal.
+
 ```vue
 <template>
   <CalPopupButton
@@ -90,6 +92,7 @@ A versatile button that opens the calendar in a modal.
 
 **Floating Widget:**
 A floating action button (FAB) that stays visible on the page.
+
 ```vue
 <template>
   <CalFloatingWidget
@@ -108,9 +111,11 @@ A floating action button (FAB) that stays visible on the page.
 This module provides a powerful, layered customization system.
 
 ### Level 1: Presets (Easiest)
+
 Use simple props for common styles. This is the fastest way to get a great-looking widget.
 
 **Available on `<CalPopupButton>` and `<CalFloatingWidget>`:**
+
 - `variant`: `primary`, `secondary`, `success`, `warning`, `danger`, `outline`, `ghost`
 - `size`: `xs`, `small`, `medium`, `large`, `xl`
 - `shape`: `square`, `rounded`, `pill` (for `CalPopupButton`)
@@ -121,9 +126,11 @@ Use simple props for common styles. This is the fastest way to get a great-looki
 ```
 
 ### Level 2: Fine-Tuning Props
+
 Override specific CSS properties directly.
 
 **Available on all components:**
+
 - `borderRadius`, `borderWidth`, `boxShadow`, `fontFamily`, etc.
 
 ```vue
@@ -131,6 +138,7 @@ Override specific CSS properties directly.
 ```
 
 ### Level 3: The `custom*` Props
+
 For more complex overrides, use the `customColors`, `customSizes`, and `customAnimations` objects. These props give you access to the internal CSS variables.
 
 ```vue
@@ -139,17 +147,18 @@ For more complex overrides, use the `customColors`, `customSizes`, and `customAn
     background: 'linear-gradient(45deg, #ff6b6b, #ee5a24)',
     hover: 'linear-gradient(45deg, #ee5a24, #d63031)',
     text: '#ffffff',
-    shadow: '0 8px 32px rgba(255, 107, 107, 0.4)'
+    shadow: '0 8px 32px rgba(255, 107, 107, 0.4)',
   }"
   :custom-sizes="{
     width: '80px',
     height: '80px',
-    iconSize: '28px'
+    iconSize: '28px',
   }"
 />
 ```
 
 ### Level 4: Slots for Custom Content
+
 Replace the default text or icon with your own components or HTML.
 
 ```vue
@@ -162,13 +171,11 @@ Replace the default text or icon with your own components or HTML.
 ```
 
 ### Level 5: Total Control
+
 For ultimate control, set `disableDefaultStyles: true` and build your own design from scratch using the `buttonClass` and `buttonStyle` props.
 
 ```vue
-<CalPopupButton
-  :disable-default-styles="true"
-  button-class="my-own-button-class"
-/>
+<CalPopupButton :disable-default-styles="true" button-class="my-own-button-class" />
 ```
 
 ---
@@ -176,9 +183,11 @@ For ultimate control, set `disableDefaultStyles: true` and build your own design
 ## 🧩 Components Reference
 
 ### `<CalInlineWidget>`
+
 Embeds a calendar directly into the page.
 
 **Key Props:**
+
 - `calLink?: string`: Your Cal.com link.
 - `height?: string | number`: Height of the widget container (default: `630px`).
 - `theme?: 'light' | 'dark' | 'auto'`: The base theme for the widget.
@@ -189,12 +198,15 @@ Embeds a calendar directly into the page.
 - **Loading & Error Props**: Full control over loading and error states (`loadingText`, `errorTitle`, custom classes/styles, etc.).
 
 **Slots:**
+
 - `#loading-spinner`, `#loading-text`, `#error-icon`, `#error-text`
 
 ### `<CalPopupButton>`
+
 A highly customizable button that opens a popup.
 
 **Key Props:**
+
 - `calLink?: string`: Your Cal.com link.
 - **Presets**: `variant`, `size`, `shape`.
 - **States**: `loading`, `disabled`.
@@ -203,13 +215,16 @@ A highly customizable button that opens a popup.
 - **Overrides**: `buttonClass`, `buttonStyle`.
 
 **Slots:**
+
 - `#default`: For the button's main text content.
 - `#icon`: For the button's icon.
 
 ### `<CalFloatingWidget>`
+
 A floating action button that opens a popup.
 
 **Key Props:**
+
 - `calLink?: string`: Your Cal.com link.
 - **Presets**: `variant`, `size`.
 - **Positioning**: `position` (`bottom-right`, etc.), `zIndex`.
@@ -218,6 +233,7 @@ A floating action button that opens a popup.
 - **Overrides**: `buttonClass`, `buttonStyle`.
 
 **Slots:**
+
 - `#text`: For the button's text label.
 - `#icon`: For the button's icon.
 
@@ -228,14 +244,18 @@ A floating action button that opens a popup.
 Interact with and listen to Cal.com events programmatically.
 
 ### `useCalcom()`
+
 Provides methods to control Cal.com widgets.
+
 - `openPopup(options)`
 - `closePopup()`
 - `isLoaded()`
 - `waitForCal()`
 
 ### `useCalcomEventListener()`
+
 React to events triggered by the Cal.com widgets.
+
 - `bookingSuccessful`
 - `eventTypeSelected`
 - `dateSelected`
