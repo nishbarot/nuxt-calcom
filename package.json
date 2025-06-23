@@ -1,6 +1,6 @@
 {
   "name": "nuxt-calcom",
-  "version": "1.1.4",
+  "version": "1.1.5",
   "description": "A Nuxt 3 module for integrating Cal.com scheduling widgets",
   "type": "module",
   "exports": {
