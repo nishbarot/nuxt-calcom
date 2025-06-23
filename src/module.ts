@@ -1,6 +1,8 @@
-import { defineNuxtModule, addPlugin, addComponent, createResolver } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addPlugin, addComponent, addImports } from '@nuxt/kit'
+import { defu } from 'defu'
+import type { ModuleOptions } from './../runtime/types'
 
-export default defineNuxtModule({
+export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-calcom',
     configKey: 'calcom',
@@ -8,28 +10,48 @@ export default defineNuxtModule({
       nuxt: '^3.0.0',
     },
   },
-  defaults: {},
+  defaults: {
+    calLink: 'demo',
+    defaultLink: 'demo',
+    theme: 'light',
+    hideEventTypeDetails: false,
+    uiOptions: {},
+  },
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    // Add plugin
-    addPlugin(resolver.resolve('./runtime/plugin'))
+    const moduleOptions = defu(nuxt.options.runtimeConfig.public.calcom as ModuleOptions, options)
 
-    // Add components
-    addComponent({
-      name: 'CalPopupButton',
-      filePath: resolver.resolve('./runtime/components/CalPopupButton.vue'),
-      export: 'default',
-    })
+    nuxt.options.runtimeConfig.public.calcom = moduleOptions
+
+    addPlugin(resolver.resolve('../runtime/plugin'))
+
     addComponent({
       name: 'CalFloatingWidget',
-      filePath: resolver.resolve('./runtime/components/CalFloatingWidget.vue'),
       export: 'default',
+      filePath: resolver.resolve('../runtime/components/CalFloatingWidget.vue'),
     })
+
     addComponent({
       name: 'CalInlineWidget',
-      filePath: resolver.resolve('./runtime/components/CalInlineWidget.vue'),
       export: 'default',
+      filePath: resolver.resolve('../runtime/components/CalInlineWidget.vue'),
+    })
+
+    addComponent({
+      name: 'CalPopupButton',
+      export: 'default',
+      filePath: resolver.resolve('../runtime/components/CalPopupButton.vue'),
+    })
+
+    addImports({
+      name: 'useCalcom',
+      from: resolver.resolve('../runtime/composables/useCalcom'),
+    })
+
+    addImports({
+      name: 'useCalcomEventListener',
+      from: resolver.resolve('../runtime/composables/useCalcomEventListener'),
     })
   },
 })
