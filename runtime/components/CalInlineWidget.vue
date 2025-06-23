@@ -130,10 +130,11 @@ const containerRef = ref<HTMLElement>()
 const isLoading = ref(true)
 const loadError = ref<string | null>(null)
 
-const instanceId = `cal-inline-${Math.random().toString(36).substr(2, 9)}`
-const containerId = ref(instanceId)
+// Generate a stable ID based on component instance
+const instanceId = Math.random().toString(36).substr(2, 9)
+const containerId = ref(`cal-inline-${instanceId}`)
 
-const isEmbedInitialized = false
+const isEmbedInitialized = ref(false)
 
 // Computed styles
 const computedStyles = computed(() => {
@@ -192,9 +193,13 @@ const initializeEmbed = async () => {
   loadError.value = null
 
   await nextTick()
-  const element = document.getElementById(containerId.value)
+
+  const element = containerRef.value
+
   if (!element) {
-    loadError.value = `Container #${containerId.value} not found.`
+    const errorMessage = `Container element could not be found.`
+    console.error(`[nuxt-calcom] ${errorMessage}`)
+    loadError.value = errorMessage
     isLoading.value = false
     return
   }
@@ -205,19 +210,65 @@ const initializeEmbed = async () => {
     // Clean up any previous embed in this container
     element.innerHTML = ''
 
+    // Set up event listeners for the embed
     Cal('on', {
       action: 'linkReady',
       callback: () => {
+        console.log('[nuxt-calcom] Inline widget loaded successfully')
         isLoading.value = false
         loadError.value = null
+        isEmbedInitialized.value = true
       },
     })
 
-    Cal('inline', {
-      elementOrSelector: `#${containerId.value}`,
-      calLink: effectiveCalLink.value,
-      config: computedUiOptions.value,
+    Cal('on', {
+      action: 'linkFailed',
+      callback: (e: any) => {
+        console.error('[nuxt-calcom] Inline widget failed to load:', e)
+        isLoading.value = false
+        loadError.value = 'Failed to load calendar'
+      },
     })
+
+    // Configure UI styling first if needed
+    if (Object.keys(computedUiOptions.value).length > 0) {
+      Cal('ui', {
+        styles: {
+          body: {
+            background: 'transparent',
+          },
+          eventTypeListItem: {
+            background: 'transparent',
+          },
+        },
+      })
+    }
+
+    console.log('[nuxt-calcom] Initializing inline widget for:', effectiveCalLink.value)
+
+    // Use the correct Cal.com inline API - pass the actual HTMLElement for robustness
+    Cal('inline', {
+      elementOrSelector: element,
+      calLink: effectiveCalLink.value,
+    })
+
+    // Add a fallback timeout to handle cases where linkReady never fires
+    setTimeout(() => {
+      if (isLoading.value) {
+        // Check if iframe was actually created
+        const iframe = element.querySelector('iframe')
+        if (iframe) {
+          console.log('[nuxt-calcom] Iframe detected, assuming load success')
+          isLoading.value = false
+          loadError.value = null
+          isEmbedInitialized.value = true
+        } else {
+          console.warn('[nuxt-calcom] No iframe detected after timeout')
+          isLoading.value = false
+          loadError.value = 'Calendar took too long to load'
+        }
+      }
+    }, 10000) // 10 second timeout
   } catch (error) {
     isLoading.value = false
     loadError.value = error instanceof Error ? error.message : 'Failed to initialize'
@@ -239,7 +290,7 @@ onMounted(initializeEmbed)
 
 onUnmounted(() => {
   // Cleanup Cal.com listeners
-  if (window.Cal && isEmbedInitialized) {
+  if (window.Cal && isEmbedInitialized.value) {
     try {
       window.Cal('off', { action: 'linkReady' })
       window.Cal('off', { action: 'linkFailed' })

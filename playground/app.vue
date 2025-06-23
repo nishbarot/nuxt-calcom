@@ -253,6 +253,20 @@
               />
             </div>
           </div>
+
+          <!-- Test Button for Playwright -->
+          <div class="button-demo">
+            <h3>Test Button</h3>
+            <CalPopupButton
+              :key="`test-btn-${effectiveCalLink}`"
+              :cal-link="effectiveCalLink"
+              :text="userInputLink ? `Book: ${userInputLink}` : 'Schedule Meeting'"
+              variant="primary"
+              size="medium"
+              button-class="test-popup-button"
+              :has-icon="true"
+            />
+          </div>
         </div>
       </section>
 
@@ -536,7 +550,7 @@ const validateInput = (input: string) => {
 
 const checkCalStatus = () => {
   if (typeof window !== 'undefined') {
-    isCalLoaded.value = !!(window.Cal && typeof window.Cal === 'function')
+    isCalLoaded.value = !!(window.Cal && typeof window.Cal === 'function' && window.Cal.loaded)
   }
 }
 

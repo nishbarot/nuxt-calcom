@@ -84,7 +84,7 @@ const props = defineProps({
     type: Object,
     default: () => ({}), // { duration, easing, pulseScale, rippleColor }
   },
-  zIndex: { type: [String, Number], default: 9999 },
+  zIndex: { type: [String, Number], default: 2147483647 },
   borderRadius: { type: String, default: '' },
   boxShadow: { type: String, default: '' },
   fontFamily: { type: String, default: '' },

@@ -27,23 +27,25 @@ export default defineNuxtPlugin(() => {
   script.innerHTML = `(function (C, A, L) { let p = function (a, ar) { a.q.push(ar); }; let d = C.document; C.Cal = C.Cal || function () { let cal = C.Cal; let ar = arguments; if (!cal.loaded) { cal.ns = {}; cal.q = cal.q || []; d.head.appendChild(d.createElement("script")).src = A; cal.loaded = true; } if (ar[0] === L) { const api = function () { p(api, arguments); }; const namespace = ar[1]; api.q = api.q || []; typeof namespace === "string" ? (C.Cal.ns = C.Cal.ns || {}, C.Cal.ns[namespace] = api) && p(api, ar) : p(cal, ar); return; } p(cal, ar); }; C.Cal.l = C.Cal.l || function (ar) { ar.forEach(function (a) { p(C.Cal, a); }); }; })(window, "https://cal.com/embed.js", "init");`
   document.head.appendChild(script)
 
-  // Perform global Cal.com initialization once the script is ready
-  const performGlobalInit = () => {
-    if (window.Cal && typeof window.Cal === 'function' && !window.Cal.loaded) {
-      // The Cal.loaded flag is set by the embed script itself after its own setup.
-      // We should make the global init call. The loader has already queued it if we use Cal("init", ...)
-      // before embed.js is fully processed. Let's ensure it's explicitly done.
-      console.log('[nuxt-calcom] Performing global Cal("init")')
-      window.Cal('init', { origin: 'https://cal.com' })
-      // Note: The loader itself might have already executed a queued "init" if one was pushed early.
-      // This explicit call ensures it happens if no other Cal() calls were made to queue an init.
-    } else if (window.Cal && window.Cal.loaded) {
-      console.log('[nuxt-calcom] Cal.com already loaded and global init likely processed.')
-    } else {
-      setTimeout(performGlobalInit, 10) // Wait for Cal to be defined
+  // Initialize Cal.com immediately after the loader script is added
+  const initializeCal = () => {
+    if (typeof window.Cal === 'function') {
+      console.log('[nuxt-calcom] Initializing Cal.com with origin')
+      try {
+        // Initialize Cal.com with proper configuration
+        window.Cal('init', {
+          origin: 'https://cal.com',
+          debug: false,
+        })
+      } catch (error) {
+        console.warn('[nuxt-calcom] Error during Cal.com initialization:', error)
+      }
     }
   }
-  performGlobalInit()
+
+  // Try to initialize immediately and also set up a fallback
+  initializeCal()
+  setTimeout(initializeCal, 100) // Fallback after 100ms
 
   // Wait for Cal to be available and then initialize any pending namespaces
   const initializePendingNamespaces = () => {
@@ -82,17 +84,35 @@ export default defineNuxtPlugin(() => {
   const calcomPlugin = {
     waitForCal: (): Promise<CalFunction> => {
       return new Promise((resolve, reject) => {
+        let attempts = 0
+        const maxAttempts = 500 // 5 seconds with 10ms intervals
+
         const checkCal = () => {
+          attempts++
+
           if (typeof window.Cal === 'function') {
+            // Cal function exists, let's also check if the embed script is loaded
+            const hasLoadedFlag = window.Cal.loaded === true
+            const hasQueue = Array.isArray(window.Cal.q)
+
+            console.log('[nuxt-calcom] Cal.com status check:', {
+              hasFunction: true,
+              hasLoadedFlag,
+              hasQueue,
+              attempts,
+            })
+
+            // Return the Cal function as soon as it's available
             resolve(window.Cal)
+          } else if (attempts >= maxAttempts) {
+            console.error('[nuxt-calcom] Timeout waiting for Cal.com script to load')
+            reject(new Error('Cal.com script failed to load within timeout'))
           } else {
             setTimeout(checkCal, 10)
           }
         }
-        checkCal()
 
-        // Timeout after 10 seconds
-        setTimeout(() => reject(new Error('Cal.com script failed to load')), 10000)
+        checkCal()
       })
     },
 
