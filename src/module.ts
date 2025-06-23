@@ -1,8 +1,6 @@
-import { defineNuxtModule, createResolver, addPlugin, addComponent, addImports } from '@nuxt/kit'
-import { defu } from 'defu'
-import type { ModuleOptions } from './../runtime/types'
+import { defineNuxtModule, addPlugin, addComponent, createResolver } from '@nuxt/kit'
 
-export default defineNuxtModule<ModuleOptions>({
+export default defineNuxtModule({
   meta: {
     name: 'nuxt-calcom',
     configKey: 'calcom',
@@ -10,48 +8,28 @@ export default defineNuxtModule<ModuleOptions>({
       nuxt: '^3.0.0',
     },
   },
-  defaults: {
-    calLink: 'demo',
-    defaultLink: 'demo',
-    theme: 'light',
-    hideEventTypeDetails: false,
-    uiOptions: {},
-  },
+  defaults: {},
   setup(options, nuxt) {
     const resolver = createResolver(import.meta.url)
 
-    const moduleOptions = defu(nuxt.options.runtimeConfig.public.calcom as ModuleOptions, options)
+    // Add plugin
+    addPlugin(resolver.resolve('./runtime/plugin'))
 
-    nuxt.options.runtimeConfig.public.calcom = moduleOptions
-
-    addPlugin(resolver.resolve('../runtime/plugin'))
-
-    addComponent({
-      name: 'CalFloatingWidget',
-      export: 'default',
-      filePath: resolver.resolve('../runtime/components/CalFloatingWidget.vue'),
-    })
-
-    addComponent({
-      name: 'CalInlineWidget',
-      export: 'default',
-      filePath: resolver.resolve('../runtime/components/CalInlineWidget.vue'),
-    })
-
+    // Add components
     addComponent({
       name: 'CalPopupButton',
+      filePath: resolver.resolve('./runtime/components/CalPopupButton.vue'),
       export: 'default',
-      filePath: resolver.resolve('../runtime/components/CalPopupButton.vue'),
     })
-
-    addImports({
-      name: 'useCalcom',
-      from: resolver.resolve('../runtime/composables/useCalcom'),
+    addComponent({
+      name: 'CalFloatingWidget',
+      filePath: resolver.resolve('./runtime/components/CalFloatingWidget.vue'),
+      export: 'default',
     })
-
-    addImports({
-      name: 'useCalcomEventListener',
-      from: resolver.resolve('../runtime/composables/useCalcomEventListener'),
+    addComponent({
+      name: 'CalInlineWidget',
+      filePath: resolver.resolve('./runtime/components/CalInlineWidget.vue'),
+      export: 'default',
     })
   },
 })
