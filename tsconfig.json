@@ -1,5 +1,6 @@
 {
   // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -17,5 +18,10 @@
     "types",
     "playground" // Include playground for type checking during development, but build should exclude.
   ],
-  "exclude": ["node_modules", "dist", ".nuxt", ".output"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    ".nuxt",
+    ".output"
+  ]
 }

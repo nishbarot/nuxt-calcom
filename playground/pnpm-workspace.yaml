@@ -1,0 +1,2 @@
+overrides:
+  nuxt-calcom: link:../../../../Library/pnpm/global/5/node_modules/nuxt-calcom

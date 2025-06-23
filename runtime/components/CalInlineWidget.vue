@@ -1,38 +1,108 @@
 <template>
-  <ClientOnly>
-    <div :id="containerId" ref="containerRef" class="cal-inline-widget" :style="containerStyle" />
-    <template #fallback>
-      <div v-if="isLoading && !loadError" class="cal-loading-placeholder" :style="containerStyle">
-        <div class="loading-content">
-          <div class="loading-spinner" />
-          <p>Loading Cal.com calendar...</p>
+  <div :class="['cal-inline-container', containerClass]" :style="computedStyles">
+    <!-- This div is the target for the Cal.com embed -->
+    <div :id="containerId" ref="containerRef" class="cal-inline-widget-embed" />
+    
+    <!-- Loading State Overlay -->
+    <div v-if="isLoading" class="cal-state-overlay loading-overlay" :class="loadingClass" :style="loadingStyle">
+      <div class="loading-content">
+        <div v-if="showLoadingSpinner" class="loading-spinner">
+          <slot name="loading-spinner">
+            <div class="default-spinner" />
+          </slot>
+        </div>
+        <div v-if="showLoadingText" class="loading-text">
+          <slot name="loading-text">
+            <p>{{ loadingText }}</p>
+          </slot>
         </div>
       </div>
-      <div v-if="loadError" class="cal-error-placeholder" :style="containerStyle">
-        <p>Error loading calendar: {{ loadError }}</p>
+    </div>
+    
+    <!-- Error State Overlay -->
+    <div v-if="loadError" class="cal-state-overlay error-overlay" :class="errorClass" :style="errorStyle">
+      <div class="error-content">
+        <div v-if="showErrorIcon" class="error-icon">
+          <slot name="error-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="15" y1="9" x2="9" y2="15"/>
+              <line x1="9" y1="9" x2="15" y2="15"/>
+            </svg>
+          </slot>
+        </div>
+        <div class="error-text">
+          <slot name="error-text" :error="loadError">
+            <h3>{{ errorTitle }}</h3>
+            <p>{{ loadError }}</p>
+            <button v-if="showRetryButton" @click="retryLoad" class="retry-button">
+              {{ retryButtonText }}
+            </button>
+          </slot>
+        </div>
       </div>
-    </template>
-  </ClientOnly>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
+// @ts-ignore
 import { useRuntimeConfig, useNuxtApp } from '#app'
 
-interface Props {
-  calLink?: string
-  uiOptions?: Record<string, unknown>
-  style?: Record<string, unknown>
-  height?: string | number
-  width?: string | number
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  calLink: undefined,
-  uiOptions: () => ({}),
-  style: () => ({}),
-  height: '630px',
-  width: '100%',
+const props = defineProps({
+  calLink: { type: String, required: false },
+  uiOptions: { type: Object, default: () => ({}) },
+  containerClass: { type: String, default: '' },
+  containerStyle: { type: Object, default: () => ({}) },
+  height: { type: [String, Number], default: '630px' },
+  width: { type: [String, Number], default: '100%' },
+  minHeight: { type: [String, Number], default: '' },
+  maxHeight: { type: [String, Number], default: '' },
+  // Loading customization
+  loadingText: { type: String, default: 'Loading Cal.com calendar...' },
+  showLoadingSpinner: { type: Boolean, default: true },
+  showLoadingText: { type: Boolean, default: true },
+  loadingClass: { type: String, default: '' },
+  loadingStyle: { type: Object, default: () => ({}) },
+  // Error customization  
+  errorTitle: { type: String, default: 'Failed to Load Calendar' },
+  showErrorIcon: { type: Boolean, default: true },
+  showRetryButton: { type: Boolean, default: true },
+  retryButtonText: { type: String, default: 'Try Again' },
+  errorClass: { type: String, default: '' },
+  errorStyle: { type: Object, default: () => ({}) },
+  // Enhanced customization
+  theme: {
+    type: String,
+    default: 'auto',
+    validator: (value: string) => ['light', 'dark', 'auto', 'custom'].includes(value)
+  },
+  borderRadius: { type: String, default: '' },
+  border: { type: String, default: '' },
+  boxShadow: { type: String, default: '' },
+  backgroundColor: { type: String, default: '' },
+  // Custom colors for theming
+  customColors: {
+    type: Object,
+    default: () => ({}) // { background, border, text, accent, loading, error }
+  },
+  // Animation settings
+  customAnimations: {
+    type: Object,
+    default: () => ({}) // { fadeIn, slideIn, duration, easing }
+  },
+  // Responsive settings
+  responsive: { type: Boolean, default: true },
+  breakpoints: {
+    type: Object,
+    default: () => ({
+      mobile: { width: '100%', height: '500px' },
+      tablet: { width: '100%', height: '600px' },
+      desktop: { width: '100%', height: '630px' }
+    })
+  },
+  disableDefaultStyles: { type: Boolean, default: false }
 })
 
 const config = useRuntimeConfig()
@@ -41,109 +111,368 @@ const containerRef = ref<HTMLElement>()
 const isLoading = ref(true)
 const loadError = ref<string | null>(null)
 
-// Generate a unique ID for the container
-const instanceId = Math.random().toString(36).substr(2, 9)
-const containerId = `cal-inline-${instanceId}`
+const instanceId = `cal-inline-${Math.random().toString(36).substr(2, 9)}`
+const containerId = ref(instanceId)
 
-// Compute container styles
-const containerStyle = computed(() => ({
-  height: typeof props.height === 'number' ? `${props.height}px` : props.height,
-  width: typeof props.width === 'number' ? `${props.width}px` : props.width,
-  ...props.style,
-}))
+let isEmbedInitialized = false
 
-// Compute UI options
+// Computed classes
+const computedClasses = computed(() => {
+  const classes = ['cal-inline-widget']
+  
+  if (!props.disableDefaultStyles) {
+    if (props.theme !== 'custom') classes.push(`theme-${props.theme}`)
+    if (props.responsive) classes.push('responsive')
+    if (isLoading.value) classes.push('is-loading')
+    if (loadError.value) classes.push('has-error')
+  }
+  
+  if (props.containerClass) classes.push(props.containerClass)
+  
+  return classes.join(' ')
+})
+
+const loadingClasses = computed(() => {
+  const classes = ['cal-loading-placeholder']
+  if (props.loadingClass) classes.push(props.loadingClass)
+  return classes.join(' ')
+})
+
+const errorClasses = computed(() => {
+  const classes = ['cal-error-placeholder']
+  if (props.errorClass) classes.push(props.errorClass)
+  return classes.join(' ')
+})
+
+// Computed styles
+const computedStyles = computed(() => {
+  const styles: Record<string, string> = {}
+  
+  styles.height = typeof props.height === 'number' ? `${props.height}px` : props.height
+  styles.width = typeof props.width === 'number' ? `${props.width}px` : props.width
+  
+  if (props.minHeight) styles.minHeight = typeof props.minHeight === 'number' ? `${props.minHeight}px` : props.minHeight
+  if (props.maxHeight) styles.maxHeight = typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight
+  
+  if (props.borderRadius) styles.borderRadius = props.borderRadius
+  if (props.border) styles.border = props.border
+  if (props.boxShadow) styles.boxShadow = props.boxShadow
+  if (props.backgroundColor) styles.backgroundColor = props.backgroundColor
+  
+  if (props.customColors.background) styles['--cal-bg'] = props.customColors.background
+  if (props.customColors.border) styles['--cal-border'] = props.customColors.border
+  if (props.customColors.text) styles['--cal-text'] = props.customColors.text
+  if (props.customColors.accent) styles['--cal-accent'] = props.customColors.accent
+  if (props.customColors.loading) styles['--cal-loading'] = props.customColors.loading
+  if (props.customColors.error) styles['--cal-error'] = props.customColors.error
+  
+  if (props.customAnimations.duration) styles['--cal-animation-duration'] = props.customAnimations.duration
+  if (props.customAnimations.easing) styles['--cal-animation-easing'] = props.customAnimations.easing
+  
+  return { ...styles, ...props.containerStyle }
+})
+
+const loadingStyles = computed(() => ({ ...computedStyles.value, ...props.loadingStyle }))
+const errorStyles = computed(() => ({ ...computedStyles.value, ...props.errorStyle }))
+
 const computedUiOptions = computed(() => {
   const calcomConfig = config.public.calcom as Record<string, unknown>
   return {
     ...(calcomConfig?.uiOptions as Record<string, unknown>),
     ...props.uiOptions,
-    theme: calcomConfig?.theme,
+    theme: props.theme !== 'auto' ? props.theme : calcomConfig?.theme,
     branding: calcomConfig?.branding,
     hideEventTypeDetails: calcomConfig?.hideEventTypeDetails,
   }
 })
 
-let isEmbedInitialized = false
+const effectiveCalLink = computed(() => {
+  const calcomConfig = config.public.calcom as { defaultLink?: string }
+  return props.calLink || calcomConfig?.defaultLink
+})
 
 const initializeEmbed = async () => {
-  if (isEmbedInitialized || !import.meta.client) return
+  if (!import.meta.client || !effectiveCalLink.value) return
 
+  isLoading.value = true
+  loadError.value = null
+  
   await nextTick()
-  const element = document.getElementById(containerId)
+  const element = document.getElementById(containerId.value)
   if (!element) {
-    console.error(`[nuxt-calcom] Could not find element with ID: ${containerId}`)
+    loadError.value = `Container #${containerId.value} not found.`
+    isLoading.value = false
     return
   }
 
   try {
-    await $calcom.waitForCal()
-    if (window.Cal) {
-      window.Cal('inline', {
-        elementOrSelector: `#${containerId}`,
-        calLink: props.calLink,
-        config: computedUiOptions.value,
-      })
-      window.Cal('on', {
-        action: 'linkReady',
-        callback: () => {
-          isLoading.value = false
-          loadError.value = null
-          console.log(`[nuxt-calcom] Inline widget is ready for: ${props.calLink}`)
-        },
-      })
-      window.Cal('on', {
-        action: 'linkFailed',
-        callback: (e: { detail: { data: { msg: string } } }) => {
-          isLoading.value = false
-          loadError.value = e.detail?.data?.msg || 'An unknown error occurred.'
-          console.error(`[nuxt-calcom] Inline widget failed to load:`, e.detail)
-        },
-      })
-      isEmbedInitialized = true
-    }
+    const Cal = await $calcom.waitForCal()
+
+    // Clean up any previous embed in this container
+    element.innerHTML = ''
+    
+    Cal('on', {
+      action: 'linkReady',
+      callback: () => {
+        isLoading.value = false
+        loadError.value = null
+      }
+    })
+
+    Cal('inline', {
+      elementOrSelector: `#${containerId.value}`,
+      calLink: effectiveCalLink.value,
+      config: computedUiOptions.value
+    })
   } catch (error) {
-    console.error('[nuxt-calcom] Error initializing inline widget:', error)
-    loadError.value = 'Failed to load Cal.com script.'
     isLoading.value = false
+    loadError.value = error instanceof Error ? error.message : 'Failed to initialize'
+    console.error(`[nuxt-calcom] Error initializing inline widget:`, error)
   }
 }
 
+const retryLoad = () => {
+  initializeEmbed()
+}
+
+watch(effectiveCalLink, (newLink, oldLink) => {
+  if (newLink !== oldLink) {
+    initializeEmbed()
+  }
+})
+
 onMounted(initializeEmbed)
+
+onUnmounted(() => {
+  // Cleanup Cal.com listeners
+  if (window.Cal && isEmbedInitialized) {
+    try {
+      window.Cal('off', { action: 'linkReady' })
+      window.Cal('off', { action: 'linkFailed' })
+    } catch (error) {
+      console.warn('[nuxt-calcom] Error cleaning up Cal.com listeners:', error)
+    }
+  }
+})
 </script>
 
 <style scoped>
+.cal-inline-container {
+  position: relative;
+  /* Base styles that can be overridden by props */
+  --cal-bg: #ffffff;
+  --cal-border: #e5e7eb;
+  --cal-text: #374151;
+  --cal-accent: #3b82f6;
+  --cal-loading: #6b7280;
+  --cal-error: #ef4444;
+  --cal-animation-duration: 0.3s;
+  --cal-animation-easing: ease-in-out;
+  
+  background-color: var(--cal-bg);
+  border: 1px solid var(--cal-border);
+  border-radius: 0.5rem;
+  overflow: auto;
+  transition: all var(--cal-animation-duration) var(--cal-animation-easing);
+}
+
+.cal-inline-widget-embed {
+  width: 100%;
+  height: 100%;
+}
+
+.cal-state-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  animation: fadeIn var(--cal-animation-duration) var(--cal-animation-easing);
+}
+
+.loading-overlay {
+  background: var(--cal-bg);
+  color: var(--cal-loading);
+}
+
+.error-overlay {
+  background: var(--cal-bg);
+  color: var(--cal-error);
+  border: 2px solid var(--cal-error);
+}
+
+.loading-content, .error-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 400px;
+}
+
+.loading-spinner {
+  margin-bottom: 1rem;
+}
+
+.default-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(59, 130, 246, 0.1);
+  border-top: 4px solid var(--cal-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+.loading-text p {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.error-icon {
+  margin-bottom: 1rem;
+}
+
+.error-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.error-text h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.error-text p {
+  margin: 0 0 1.5rem 0;
+  font-size: 0.875rem;
+  color: var(--cal-text);
+  opacity: 0.8;
+}
+
+.retry-button {
+  background: var(--cal-accent);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.retry-button:active {
+  transform: translateY(0);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cal-state-overlay, .default-spinner {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Theme variants */
+.theme-light {
+  --cal-bg: #ffffff;
+  --cal-border: #e5e7eb;
+  --cal-text: #374151;
+}
+
+.theme-dark {
+  --cal-bg: #1f2937;
+  --cal-border: #374151;
+  --cal-text: #f9fafb;
+}
+
+.theme-auto {
+  --cal-bg: #ffffff;
+  --cal-border: #e5e7eb;
+  --cal-text: #374151;
+}
+
+@media (prefers-color-scheme: dark) {
+  .theme-auto {
+    --cal-bg: #1f2937;
+    --cal-border: #374151;
+    --cal-text: #f9fafb;
+  }
+}
+
+/* State styles */
+.is-loading {
+  opacity: 0.8;
+}
+
+.has-error {
+  border-color: var(--cal-error);
+}
+
+/* Responsive behavior */
+.responsive {
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (max-width: 768px) {
+  .responsive {
+    height: 500px !important;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .responsive {
+    height: 600px !important;
+  }
+}
+
+/* Loading placeholder */
 .cal-loading-placeholder {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 500px;
-  background-color: #f8f9fa;
-  border: 2px dashed #dee2e6;
-  border-radius: 8px;
+  min-height: 400px;
+  background: var(--cal-bg);
+  border: 2px dashed var(--cal-border);
+  border-radius: 0.5rem;
+  color: var(--cal-loading);
+  animation: fadeIn var(--cal-animation-duration) var(--cal-animation-easing);
 }
 
-.loading-content {
-  text-align: center;
-  color: #6c757d;
-}
-
-.loading-spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #3498db;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 1rem;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .cal-state-overlay, .default-spinner {
+    animation: none;
+    transition: none;
   }
-  100% {
-    transform: rotate(360deg);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .cal-inline-widget {
+    --cal-border: #000000;
+    --cal-text: #000000;
+    --cal-accent: #0000ff;
   }
 }
 </style>
+

@@ -1,0 +1,16 @@
+lockfileVersion: '9.0'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
+overrides:
+  nuxt-calcom: link:../../../../Library/pnpm/global/5/node_modules/nuxt-calcom
+
+importers:
+
+  .:
+    dependencies:
+      nuxt-calcom:
+        specifier: link:../../../../Library/pnpm/global/5/node_modules/nuxt-calcom
+        version: link:../../../../Library/pnpm/global/5/node_modules/nuxt-calcom

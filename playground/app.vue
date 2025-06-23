@@ -52,47 +52,243 @@
     </section>
 
     <main class="widgets-area">
-      <!-- Inline Widget -->
-      <section class="widget-test-card">
-        <h2>📋 Inline Widget</h2>
-        <p class="widget-description">
-          Embeds the calendar directly in the page. Try pasting a full Cal.com URL above!
-        </p>
-        <ClientOnly fallback-tag="div" fallback="Loading inline widget...">
-          <CalInlineWidget
-            :key="effectiveCalLink"
-            :cal-link="effectiveCalLink"
-            :height="500"
-            style="border: 1px solid #ccc; border-radius: 8px; min-height: 500px"
-          />
-        </ClientOnly>
-      </section>
-
-      <!-- Popup Button -->
+      <!-- CalPopupButton Examples -->
       <section class="widget-test-card">
         <h2>🎯 Popup Button</h2>
-        <p class="widget-description">Opens the calendar in a modal popup when clicked.</p>
-        <ClientOnly fallback-tag="div" fallback="Loading popup button...">
-          <CalPopupButton
-            :key="effectiveCalLink"
-            :cal-link="effectiveCalLink"
-            :text="`Book: ${effectiveCalLink}`"
-            button-class="test-popup-button"
-          />
-        </ClientOnly>
+        <p class="widget-description">Opens the calendar in a modal popup when clicked. Fully customizable.</p>
+        <div class="button-showcase">
+          <!-- Default Button -->
+          <div class="button-demo">
+            <h3>Default Button</h3>
+            <ClientOnly fallback-tag="div" fallback="Loading popup button...">
+              <CalPopupButton
+                :key="effectiveCalLink"
+                :cal-link="effectiveCalLink"
+                text="Schedule Meeting"
+                variant="primary"
+                size="medium"
+                :has-icon="true"
+                :show-ripple="true"
+              >
+                <template #icon>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 2v4"/>
+                    <path d="M16 2v4"/>
+                    <rect width="18" height="18" x="3" y="4" rx="2"/>
+                    <path d="M3 10h18"/>
+                  </svg>
+                </template>
+              </CalPopupButton>
+            </ClientOnly>
+          </div>
+
+          <!-- Variant Examples -->
+          <div class="button-demo">
+            <h3>Different Variants</h3>
+            <div class="button-grid">
+              <CalPopupButton :cal-link="effectiveCalLink" text="Primary" variant="primary" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Secondary" variant="secondary" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Success" variant="success" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Warning" variant="warning" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Danger" variant="danger" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Outline" variant="outline" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Ghost" variant="ghost" size="small" />
+            </div>
+          </div>
+
+          <!-- Size Examples -->
+          <div class="button-demo">
+            <h3>Different Sizes</h3>
+            <div class="button-grid">
+              <CalPopupButton :cal-link="effectiveCalLink" text="XS" size="xs" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Small" size="small" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Medium" size="medium" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Large" size="large" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="XL" size="xl" />
+            </div>
+          </div>
+
+          <!-- Shape Examples -->
+          <div class="button-demo">
+            <h3>Different Shapes</h3>
+            <div class="button-grid">
+              <CalPopupButton :cal-link="effectiveCalLink" text="Square" shape="square" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Rounded" shape="rounded" />
+              <CalPopupButton :cal-link="effectiveCalLink" text="Pill" shape="pill" />
+            </div>
+          </div>
+
+          <!-- Fully Custom Button -->
+          <div class="button-demo">
+            <h3>Fully Customized</h3>
+            <CalPopupButton
+              :key="`custom-btn-${effectiveCalLink}`"
+              :cal-link="effectiveCalLink"
+              text="Custom Design"
+              variant="custom"
+              size="custom"
+              shape="custom"
+              :has-icon="true"
+              icon-position="right"
+              :show-ripple="true"
+              :custom-colors="{
+                background: 'linear-gradient(45deg, #667eea 0%, #764ba2 100%)',
+                hover: 'linear-gradient(45deg, #764ba2 0%, #667eea 100%)',
+                active: 'linear-gradient(45deg, #5a67d8 0%, #553c9a 100%)',
+                text: '#ffffff',
+                shadow: '0 10px 25px rgba(102, 126, 234, 0.4)'
+              }"
+              :custom-sizes="{
+                padding: '1rem 2rem',
+                fontSize: '1.1rem',
+                iconSize: '1.5rem',
+                height: '3.5rem'
+              }"
+              :custom-animations="{
+                duration: '0.3s',
+                easing: 'cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                hoverScale: '1.05',
+                activeScale: '0.95',
+                rippleColor: 'rgba(255, 255, 255, 0.4)'
+              }"
+              border-radius="1rem"
+              font-family="'Georgia', serif"
+              font-weight="600"
+              letter-spacing="0.05em"
+            >
+              <template #icon>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                </svg>
+              </template>
+            </CalPopupButton>
+          </div>
+
+          <!-- Icon Only & Loading States -->
+          <div class="button-demo">
+            <h3>Special States</h3>
+            <div class="button-grid">
+              <CalPopupButton 
+                :cal-link="effectiveCalLink" 
+                :has-icon="true" 
+                :show-text="false" 
+                variant="primary"
+                title="Icon Only"
+              />
+              <CalPopupButton 
+                :cal-link="effectiveCalLink" 
+                text="Loading..." 
+                :loading="true"
+                :has-icon="true"
+                variant="secondary"
+              />
+              <CalPopupButton 
+                :cal-link="effectiveCalLink" 
+                text="Disabled" 
+                :disabled="true"
+                variant="outline"
+              />
+              <CalPopupButton 
+                :cal-link="effectiveCalLink" 
+                text="Full Width" 
+                :full-width="true"
+                variant="success"
+              />
+            </div>
+          </div>
+        </div>
       </section>
 
-      <!-- Floating Widget is always present -->
+      <!-- CalInlineWidget Examples -->
+      <section class="widget-test-card">
+        <div class="inline-widget-header">
+          <h2>📋 Inline Widget</h2>
+          <div class="tabs">
+            <button
+              v-for="tab in inlineWidgetTabs"
+              :key="tab.id"
+              :class="{ 'active-tab': activeTab === tab.id }"
+              @click="activeTab = tab.id"
+            >
+              {{ tab.name }}
+            </button>
+          </div>
+        </div>
+        <p class="widget-description">
+          Embeds the calendar directly in the page. Only one inline widget can be shown at a time.
+        </p>
+        <div class="inline-widget-content">
+          <keep-alive>
+            <CalInlineWidget v-bind="activeWidgetProps" />
+          </keep-alive>
+        </div>
+      </section>
     </main>
 
+    <!-- Default FAB -->
     <ClientOnly>
       <CalFloatingWidget
         :key="effectiveCalLink"
         :cal-link="effectiveCalLink"
-        :text="`Float: ${effectiveCalLink}`"
+        text="Book a Demo"
         position="bottom-right"
-        :offset="{ x: 20, y: 20 }"
-      />
+        size="large"
+        variant="primary"
+        :pulse="true"
+        :show-ripple="true"
+      >
+        <template #icon>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 2v4"/>
+            <path d="M16 2v4"/>
+            <rect width="18" height="18" x="3" y="4" rx="2"/>
+            <path d="M3 10h18"/>
+          </svg>
+        </template>
+      </CalFloatingWidget>
+    </ClientOnly>
+
+    <!-- Fully Customized FAB Example -->
+    <ClientOnly>
+      <CalFloatingWidget
+        :key="`custom-${effectiveCalLink}`"
+        :cal-link="effectiveCalLink"
+        text="Custom Design"
+        position="bottom-left"
+        size="custom"
+        variant="custom"
+        :pulse="true"
+        :show-ripple="true"
+        :custom-colors="{
+          background: 'linear-gradient(45deg, #ff6b6b, #ee5a24)',
+          hover: 'linear-gradient(45deg, #ee5a24, #d63031)',
+          text: '#ffffff',
+          shadow: '0 8px 32px rgba(255, 107, 107, 0.4)'
+        }"
+        :custom-sizes="{
+          width: '80px',
+          height: '80px',
+          fontSize: '14px',
+          padding: '0 20px',
+          iconSize: '28px'
+        }"
+        :custom-animations="{
+          duration: '0.4s',
+          easing: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+          pulseScale: '1.15',
+          rippleColor: 'rgba(255, 255, 255, 0.5)'
+        }"
+        border-radius="20px"
+        font-family="'Comic Sans MS', cursive"
+        font-weight="bold"
+        :z-index="10000"
+      >
+        <template #icon>
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+          </svg>
+        </template>
+      </CalFloatingWidget>
     </ClientOnly>
 
     <footer class="playground-footer">
@@ -108,12 +304,83 @@ import { useRuntimeConfig } from 'nuxt/app'
 const userInputLink = ref('')
 const isCalLoaded = ref(false)
 const inputValidation = ref<{ isValid: boolean; message: string } | null>(null)
+const activeTab = ref('default')
 
-// Get the default link from Nuxt config
 const config = useRuntimeConfig()
 const configDefault = computed(() => {
   const calcomConfig = config.public.calcom as Record<string, unknown>
   return calcomConfig?.defaultLink || 'demo'
+})
+
+const effectiveCalLink = computed(() => {
+  return userInputLink.value || configDefault.value
+})
+
+const inlineWidgetTabs = [
+  { id: 'default', name: 'Default' },
+  { id: 'dark', name: 'Dark Theme' },
+  { id: 'styled', name: 'Custom Styled' },
+  { id: 'compact', name: 'Compact' },
+  { id: 'error', name: 'Error State' },
+  { id: 'slots', name: 'Custom Slots' },
+]
+
+const activeWidgetProps = computed(() => {
+  const calLink = effectiveCalLink.value
+  const key = `${activeTab.value}-${calLink}`
+
+  switch (activeTab.value) {
+    case 'dark':
+      return {
+        key,
+        calLink,
+        theme: 'dark',
+        height: 500,
+        customColors: { background: '#111827', border: '#374151', text: '#f9fafb', accent: '#3b82f6' }
+      }
+    case 'styled':
+      return {
+        key,
+        calLink,
+        height: 600,
+        borderRadius: '1rem',
+        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+        customColors: { background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', border: '#8b5cf6', accent: '#f59e0b' },
+        customAnimations: { duration: '0.5s', easing: 'cubic-bezier(0.4, 0, 0.2, 1)' }
+      }
+    case 'compact':
+      return {
+        key,
+        calLink,
+        height: 400,
+        responsive: true,
+        borderRadius: '0.75rem',
+        customColors: { accent: '#10b981' }
+      }
+    case 'error':
+      return {
+        key: 'error-demo',
+        calLink: 'nonexistent-user/invalid-link',
+        height: 500,
+        loadingText: '🚀 Launching your scheduling experience...',
+        errorTitle: 'Oops! Something went wrong',
+        retryButtonText: '🔄 Try Again',
+        customColors: { loading: '#6366f1', error: '#ef4444', accent: '#8b5cf6' },
+        loadingClass: 'custom-loading',
+        errorClass: 'custom-error'
+      }
+    case 'slots':
+       return {
+        key,
+        calLink,
+        height: 500,
+        disableDefaultStyles: true,
+        containerClass: 'custom-minimal-widget',
+        containerStyle: { background: 'white', border: '2px solid #e5e7eb', borderRadius: '12px', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)' }
+      }
+    default: // 'default'
+      return { key, calLink, height: 500 }
+  }
 })
 
 // Validate user input
@@ -173,11 +440,6 @@ const validateInput = (input: string) => {
     }
   }
 }
-
-// Determine the effective calLink to use
-const effectiveCalLink = computed(() => {
-  return userInputLink.value || configDefault.value
-})
 
 const checkCalStatus = () => {
   if (typeof window !== 'undefined') {
@@ -426,5 +688,123 @@ onMounted(() => {
   display: block;
   margin-top: 0.5rem;
   color: #9ca3af;
+}
+
+/* Button showcase styles */
+.button-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.button-demo {
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  background: #f9fafb;
+}
+
+.button-demo h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.button-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .button-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* CalInlineWidget Custom Demo Styles */
+.custom-loading {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: 2px solid #8b5cf6;
+  border-radius: 1rem;
+}
+
+.custom-error {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border: 2px solid #ef4444;
+  border-radius: 1rem;
+}
+
+.custom-minimal-widget {
+  transition: all 0.3s ease;
+}
+
+.custom-minimal-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+}
+
+.custom-spinner {
+  font-size: 3rem;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.inline-widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.tabs button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: #6b7280;
+  border-bottom: 2px solid transparent;
+  transform: translateY(2px);
+  transition: all 0.2s ease-in-out;
+}
+
+.tabs button:hover {
+  background-color: #f3f4f6;
+  color: #1f2937;
+}
+
+.tabs button.active-tab {
+  color: #3b82f6;
+  font-weight: 600;
+  border-bottom-color: #3b82f6;
+}
+
+.inline-widget-content {
+  margin-top: 1rem;
+  min-height: 500px;
 }
 </style>
