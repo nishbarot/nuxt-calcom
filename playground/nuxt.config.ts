@@ -9,6 +9,9 @@ export default defineNuxtConfig({
 
   // Add compatibility date
   compatibilityDate: '2024-04-03',
+  future: {
+    compatibilityVersion: 4,
+  },
 
   // Configure the Cal.com module
   // @ts-expect-error calcom is a valid key that is added by the module

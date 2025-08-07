@@ -1,13 +1,13 @@
 import { defineNuxtModule, createResolver, addPlugin, addComponent, addImports } from '@nuxt/kit'
 import { defu } from 'defu'
-import type { ModuleOptions } from './../runtime/types'
+import type { ModuleOptions } from '../runtime/types'
 
 export default defineNuxtModule<ModuleOptions>({
   meta: {
     name: 'nuxt-calcom',
     configKey: 'calcom',
     compatibility: {
-      nuxt: '^3.0.0',
+      nuxt: '^3.0.0 || ^4.0.0',
     },
   },
   defaults: {
