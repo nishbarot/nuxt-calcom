@@ -24,6 +24,11 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
+      - name: Clean install
+        run: |
+          rm -rf node_modules package-lock.json pnpm-lock.yaml
+          npm cache clean --force
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -65,6 +70,11 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
+
+      - name: Clean install
+        run: |
+          rm -rf node_modules package-lock.json pnpm-lock.yaml
+          npm cache clean --force
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -143,6 +153,11 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
+      - name: Clean install
+        run: |
+          rm -rf node_modules package-lock.json pnpm-lock.yaml
+          npm cache clean --force
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -180,6 +195,11 @@ jobs:
         with:
           node-version: '20'
           cache: 'pnpm'
+
+      - name: Clean install
+        run: |
+          rm -rf node_modules package-lock.json pnpm-lock.yaml
+          npm cache clean --force
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -219,6 +239,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
+
+      - name: Clean install
+        run: |
+          rm -rf node_modules package-lock.json pnpm-lock.yaml
+          npm cache clean --force
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
