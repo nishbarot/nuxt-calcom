@@ -24,9 +24,15 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Clean workspace (keep pnpm lockfile)
-        run: |
-          rm -rf node_modules package-lock.json
+      - name: Clean workspace (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: Remove-Item -Recurse -Force node_modules, package-lock.json
+
+      - name: Clean workspace (Unix)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: rm -rf node_modules package-lock.json
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
