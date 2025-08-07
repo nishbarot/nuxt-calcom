@@ -24,13 +24,12 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Clean install
+      - name: Clean workspace (keep pnpm lockfile)
         run: |
-          rm -rf node_modules package-lock.json pnpm-lock.yaml
-          npm cache clean --force
+          rm -rf node_modules package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
         run: pnpm rebuild oxc-parser esbuild || true
@@ -65,13 +64,12 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Clean install
+      - name: Clean workspace (keep pnpm lockfile)
         run: |
-          rm -rf node_modules package-lock.json pnpm-lock.yaml
-          npm cache clean --force
+          rm -rf node_modules package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
         run: pnpm rebuild oxc-parser esbuild || true
@@ -137,13 +135,12 @@ jobs:
           node-version: '20'
           cache: 'pnpm'
 
-      - name: Clean install
+      - name: Clean workspace (keep pnpm lockfile)
         run: |
-          rm -rf node_modules package-lock.json pnpm-lock.yaml
-          npm cache clean --force
+          rm -rf node_modules package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
         run: pnpm rebuild oxc-parser esbuild || true
@@ -175,7 +172,7 @@ jobs:
           cache: 'pnpm'
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
         run: pnpm rebuild oxc-parser esbuild || true
@@ -207,10 +204,9 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
 
-      - name: Clean install
+      - name: Clean workspace (keep pnpm lockfile)
         run: |
-          rm -rf node_modules package-lock.json pnpm-lock.yaml
-          npm cache clean --force
+          rm -rf node_modules package-lock.json
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile

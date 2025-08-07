@@ -39,7 +39,7 @@ jobs:
           npm cache clean --force
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
         run: pnpm rebuild oxc-parser esbuild || true
