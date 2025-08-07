@@ -17,4 +17,5 @@ jobs:
       - run: corepack enable
       - run: pnpm -v
       - run: pnpm install
+      - run: pnpm rebuild oxc-parser
       - run: pnpm run dev:prepare

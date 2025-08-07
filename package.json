@@ -75,12 +75,6 @@
     "type": "git",
     "url": "git+https://github.com/nishbarot/nuxt-calcom.git"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "oxc-parser"
-    ]
-  },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [
       "eslint --fix",
