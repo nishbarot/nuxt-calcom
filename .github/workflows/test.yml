@@ -17,6 +17,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: '10'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,6 +28,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Rebuild native modules (oxc-parser, esbuild)
+        run: pnpm rebuild oxc-parser esbuild || true
 
       - name: Run unit tests
         run: pnpm test:unit
@@ -50,6 +55,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: '10'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -59,6 +66,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Rebuild native modules (oxc-parser, esbuild)
+        run: pnpm rebuild oxc-parser esbuild || true
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps
@@ -114,6 +124,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: '10'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -123,6 +135,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Rebuild native modules (oxc-parser, esbuild)
+        run: pnpm rebuild oxc-parser esbuild || true
 
       - name: Run linter
         run: pnpm lint
@@ -143,6 +158,8 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
+        with:
+          version: '10'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -152,6 +169,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Rebuild native modules (oxc-parser, esbuild)
+        run: pnpm rebuild oxc-parser esbuild || true
 
       - name: Build module
         run: pnpm build
