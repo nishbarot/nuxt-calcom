@@ -35,22 +35,22 @@ jobs:
           if [ -f "package-lock.json" ]; then rm -f package-lock.json; fi
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: corepack pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
-        run: pnpm rebuild oxc-parser esbuild || true
+        run: corepack pnpm rebuild oxc-parser esbuild || true
 
       - name: Prepare Nuxt (generate .nuxt directory)
-        run: pnpm dev:prepare
+        run: corepack pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
         run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Run unit tests
-        run: pnpm test:unit
+        run: corepack pnpm test:unit
 
       - name: Generate coverage report
-        run: pnpm test:coverage
+        run: corepack pnpm test:coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
@@ -85,25 +85,25 @@ jobs:
           rm -rf node_modules package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: corepack pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
-        run: pnpm rebuild oxc-parser esbuild || true
+        run: corepack pnpm rebuild oxc-parser esbuild || true
 
       - name: Prepare Nuxt (generate .nuxt directory)
-        run: pnpm dev:prepare
+        run: corepack pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
         run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Install Playwright browsers
-        run: pnpm exec playwright install --with-deps
+        run: corepack pnpm exec playwright install --with-deps
 
       - name: Build module # Needs prepare step before this
-        run: pnpm build
+        run: corepack pnpm build
 
       - name: Run integration tests
-        run: pnpm test:integration
+        run: corepack pnpm test:integration
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
@@ -173,25 +173,25 @@ jobs:
           rm -rf node_modules package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: corepack pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
-        run: pnpm rebuild oxc-parser esbuild || true
+        run: corepack pnpm rebuild oxc-parser esbuild || true
 
       - name: Prepare Nuxt (generate .nuxt directory) # For pnpm build (type check)
-        run: pnpm dev:prepare
+        run: corepack pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
         run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Run linter
-        run: pnpm lint
+        run: corepack pnpm lint
 
       - name: Check formatting
-        run: pnpm format:check
+        run: corepack pnpm format:check
 
       - name: Type check # This is a pnpm build command
-        run: pnpm build
+        run: corepack pnpm build
 
   build-test:
     name: Build Test
@@ -219,22 +219,22 @@ jobs:
           rm -rf node_modules package-lock.json
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: corepack pnpm install --no-frozen-lockfile
 
       - name: Rebuild native modules (oxc-parser, esbuild)
-        run: pnpm rebuild oxc-parser esbuild || true
+        run: corepack pnpm rebuild oxc-parser esbuild || true
 
       - name: Prepare Nuxt (generate .nuxt directory)
-        run: pnpm dev:prepare
+        run: corepack pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
         run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Build module
-        run: pnpm build
+        run: corepack pnpm build
 
       - name: Test playground build
-        run: pnpm dev:build
+        run: corepack pnpm dev:build
 
   test-matrix:
     name: Test Matrix
@@ -268,16 +268,16 @@ jobs:
           if [ -f "package-lock.json" ]; then rm -f package-lock.json; fi
 
       - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: corepack pnpm install --no-frozen-lockfile
 
       - name: Prepare Nuxt (generate .nuxt directory)
-        run: pnpm dev:prepare
+        run: corepack pnpm dev:prepare
 
       - name: Remove .eslintignore if it exists
         run: node -e "try { require('fs').unlinkSync('.eslintignore'); } catch (e) { /* ignore */ }"
 
       - name: Run unit tests
-        run: pnpm test:unit
+        run: corepack pnpm test:unit
 
       - name: Build module
-        run: pnpm build
+        run: corepack pnpm build
